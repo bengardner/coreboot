@@ -34,6 +34,7 @@ const char *smbios_mainboard_product_name(void);
 const char *smbios_mainboard_serial_number(void);
 const char *smbios_mainboard_version(void);
 void smbios_mainboard_set_uuid(u8 *uuid);
+const char *smbios_mainboard_sku(void);
 const char *smbios_mainboard_bios_version(void);
 u8 smbios_mainboard_enclosure_type(void);
 #ifdef CONFIG_MAINBOARD_FAMILY
