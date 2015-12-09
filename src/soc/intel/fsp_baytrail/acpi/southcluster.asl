@@ -258,7 +258,7 @@ Device (IOSF)
 // IRQ routing for each PCI device
 #include "irqroute.asl"
 
-Scope (\_SB)
+Scope (\_SB.PCI0)
 {
 	// GPIO Devices
 	#include "gpio.asl"
