@@ -83,4 +83,8 @@ config DRIVERS_PS2_KEYBOARD
 	bool
 	default n
 
+config BOOTBLOCK_MAINBOARD_INIT
+	string
+	default "mainboard/wabtec/cpu1903/bootblock/bootblock.c"
+
 endif # BOARD_WABTEC_CPU1903
