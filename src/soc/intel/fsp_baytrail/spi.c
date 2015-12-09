@@ -17,11 +17,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <bootstate.h>
 #include <delay.h>
 #include <arch/io.h>
 #include <console/console.h>
 #include <device/pci_ids.h>
 #include <spi_flash.h>
+#include <soc/spi.h>
 
 #include <soc/lpc.h>
 #include <soc/pci_devs.h>
@@ -278,10 +280,32 @@ static ich9_spi_regs *spi_regs(void)
 	return (void *)sbase;
 }
 
+int __attribute__((weak)) mainboard_get_spi_config(struct spi_config *cfg)
+{
+	return -1;
+}
+
 void spi_init(void)
 {
+	if (cntlr.data)
+		return;
 	ich9_spi_regs *ich9_spi = spi_regs();
 
+#if ENV_RAMSTAGE
+	struct spi_config cfg;
+
+	if (mainboard_get_spi_config(&cfg) < 0) {
+		printk(BIOS_DEBUG, "No SPI lockdown configuration.\n");
+	} else {
+		writew_(cfg.preop, &ich9_spi->preop);
+		writew_(cfg.optype, &ich9_spi->optype);
+		writel_(cfg.opmenu[0], ich9_spi->opmenu + 0);
+		writel_(cfg.opmenu[1], ich9_spi->opmenu + 4);
+		writew_(readw_(&ich9_spi->hsfs) | HSFS_FLOCKDN, &ich9_spi->hsfs);
+		writel_(cfg.uvscc, &ich9_spi->uvscc);
+		writel_(cfg.lvscc | VCL, &ich9_spi->lvscc);
+	}
+#endif
 	ichspi_lock = readw_(&ich9_spi->hsfs) & HSFS_FLOCKDN;
 	cntlr.opmenu = ich9_spi->opmenu;
 	cntlr.menubytes = sizeof(ich9_spi->opmenu);
@@ -293,6 +317,13 @@ void spi_init(void)
 	cntlr.control = (uint16_t *)ich9_spi->ssfc;
 	cntlr.preop = &ich9_spi->preop;
 }
+
+static void spi_init_cb(void *unused)
+{
+	spi_init();
+}
+
+BOOT_STATE_INIT_ENTRY(BS_DEV_INIT, BS_ON_ENTRY, spi_init_cb, NULL);
 
 int spi_claim_bus(struct spi_slave *slave)
 {
