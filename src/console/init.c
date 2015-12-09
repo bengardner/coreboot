@@ -21,12 +21,18 @@
 #include <option.h>
 #include <rules.h>
 #include <version.h>
+#include "mainboard/wabtec/cpu1903/wabtec-cpu1900.h"
 
 /* While in romstage, console loglevel is built-time constant. */
 static ROMSTAGE_CONST int console_loglevel = CONFIG_DEFAULT_CONSOLE_LOGLEVEL;
 
 int console_log_level(int msg_level)
 {
+#if defined(__PRE_RAM__)
+	/* CPU-1900 HACK: use the watchdog disable to enable all logs */
+	if ((inb(CPU1900_REG_DBG) & CPU1900_REG_DBG_MSK) == CPU1900_REG_DBG_VAL)
+		return 1;
+#endif
 	return (console_loglevel >= msg_level);
 }
 
@@ -43,6 +49,6 @@ void console_init(void)
 
 	console_hw_init();
 
-	printk(BIOS_INFO, "\n\ncoreboot-%s%s %s " ENV_STRING " starting...\n",
+	printk(BIOS_NOTICE, "\n\ncoreboot-%s%s %s " ENV_STRING " starting...\n",
 	       coreboot_version, coreboot_extra_version, coreboot_build);
 }
