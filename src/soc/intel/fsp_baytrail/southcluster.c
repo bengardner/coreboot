@@ -43,6 +43,7 @@
 #include <arch/acpi.h>
 #include <arch/acpigen.h>
 #include <cpu/cpu.h>
+#include <bootstate.h>
 
 #define ENABLE_ACPI_MODE_IN_COREBOOT	0
 #define TEST_SMM_FLASH_LOCKDOWN		0
@@ -609,3 +610,14 @@ static const struct pci_driver southcluster __pci_driver = {
 	.vendor		= PCI_VENDOR_ID_INTEL,
 	.device		= LPC_DEVID,
 };
+
+static void finalize_chipset(void *unused)
+{
+	u32 *etr = (u32 *)(PMC_BASE_ADDRESS + ETR);
+
+	/*  Set the CF9 lock. */
+	write32(etr, read32(etr) | CF9LOCK);
+}
+
+BOOT_STATE_INIT_ENTRY(BS_OS_RESUME, BS_ON_ENTRY, finalize_chipset, NULL);
+BOOT_STATE_INIT_ENTRY(BS_PAYLOAD_LOAD, BS_ON_EXIT, finalize_chipset, NULL);
