@@ -19,8 +19,12 @@
 #include <stdint.h>
 
 /* These registers live behind SPI_BASE_ADDRESS. */
+#define BFPREG				0x00
 #define HSFSTS				0x04
 # define FLOCKDN			(0x1 << 15)
+#define HSFCTL				0x06
+#define FADDR				0x08
+#define FDATA				0x10
 #define PREOP				0x94
 #define OPTYPE				0x96
 #define OPMENU0				0x98
