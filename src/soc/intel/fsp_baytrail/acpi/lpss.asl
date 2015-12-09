@@ -19,6 +19,7 @@ Device (SDM1)
 	Name (_HID, "INTL9C60")
 	Name (_UID, 1)
 	Name (_DDN, "DMA Controller #1")
+	Name (_ADR, 0x00180000)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -51,6 +52,7 @@ Device (SDM2)
 	Name (_HID, "INTL9C60")
 	Name (_UID, 2)
 	Name (_DDN, "DMA Controller #2")
+	Name (_ADR, 0x001E0000)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -80,9 +82,12 @@ Device (SDM2)
 
 Device (I2C1)
 {
+#if 0
 	Name (_HID, "80860F41")
 	Name (_UID, 1)
+#endif
 	Name (_DDN, "I2C Controller #1")
+	Name (_ADR, 0x00180001)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -90,6 +95,7 @@ Device (I2C1)
 	/* Fast Mode: HCNT, LCNT, SDA Hold Time */
 	Name (FMCN, Package () { 0x55, 0x99, 0x6 })
 
+#if 0
 	Name (RBUF, ResourceTemplate()
 	{
 		Memory32Fixed (ReadWrite, 0, 0x1000, BAR0)
@@ -135,13 +141,17 @@ Device (I2C1)
 		And (PSAT, 0xfffffffc, PSAT)
 		Or (PSAT, 0x00000000, PSAT)
 	}
+#endif
 }
 
 Device (I2C2)
 {
+#if 0
 	Name (_HID, "80860F41")
 	Name (_UID, 2)
+#endif
 	Name (_DDN, "I2C Controller #2")
+	Name (_ADR, 0x00180002)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -149,6 +159,7 @@ Device (I2C2)
 	/* Fast Mode: HCNT, LCNT, SDA Hold Time */
 	Name (FMCN, Package () { 0x55, 0x99, 0x6 })
 
+#if 0
 	Name (RBUF, ResourceTemplate()
 	{
 		Memory32Fixed (ReadWrite, 0, 0x1000, BAR0)
@@ -194,13 +205,17 @@ Device (I2C2)
 		And (PSAT, 0xfffffffc, PSAT)
 		Or (PSAT, 0x00000000, PSAT)
 	}
+#endif
 }
 
 Device (I2C3)
 {
+#if 0
 	Name (_HID, "80860F41")
 	Name (_UID, 3)
+#endif
 	Name (_DDN, "I2C Controller #3")
+	Name (_ADR, 0x00180003)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -208,6 +223,7 @@ Device (I2C3)
 	/* Fast Mode: HCNT, LCNT, SDA Hold Time */
 	Name (FMCN, Package () { 0x55, 0x99, 0x6 })
 
+#if 0
 	Name (RBUF, ResourceTemplate()
 	{
 		Memory32Fixed (ReadWrite, 0, 0x1000, BAR0)
@@ -253,13 +269,16 @@ Device (I2C3)
 		And (PSAT, 0xfffffffc, PSAT)
 		Or (PSAT, 0x00000000, PSAT)
 	}
+#endif
 }
 
+#if 0
 Device (I2C4)
 {
 	Name (_HID, "80860F41")
 	Name (_UID, 4)
 	Name (_DDN, "I2C Controller #4")
+	Name (_ADR, 0x00180004)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -319,6 +338,7 @@ Device (I2C5)
 	Name (_HID, "80860F41")
 	Name (_UID, 5)
 	Name (_DDN, "I2C Controller #5")
+	Name (_ADR, 0x00180005)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -378,6 +398,7 @@ Device (I2C6)
 	Name (_HID, "80860F41")
 	Name (_UID, 6)
 	Name (_DDN, "I2C Controller #6")
+	Name (_ADR, 0x00180006)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -437,6 +458,7 @@ Device (I2C7)
 	Name (_HID, "80860F41")
 	Name (_UID, 7)
 	Name (_DDN, "I2C Controller #7")
+	Name (_ADR, 0x00180007)
 
 	/* Standard Mode: HCNT, LCNT, SDA Hold Time */
 	Name (SSCN, Package () { 0x200, 0x200, 0x6 })
@@ -490,12 +512,14 @@ Device (I2C7)
 		Or (PSAT, 0x00000000, PSAT)
 	}
 }
+#endif /* 0 */
 
 Device (SPI1)
 {
 	Name (_HID, "80860F0E")
 	Name (_UID, 1)
 	Name (_DDN, "SPI Controller #2")
+	Name (_ADR, 0x001E0005)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -549,6 +573,7 @@ Device (PWM1)
 	Name (_HID, "80860F09")
 	Name (_UID, 1)
 	Name (_DDN, "PWM Controller #1")
+	Name (_ADR, 0x001E0001)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -577,6 +602,7 @@ Device (PWM2)
 	Name (_HID, "80860F09")
 	Name (_UID, 2)
 	Name (_DDN, "PWM Controller #2")
+	Name (_ADR, 0x001E0002)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -605,6 +631,7 @@ Device (UAR1)
 	Name (_HID, "80860F0A")
 	Name (_UID, 1)
 	Name (_DDN, "HS-UART Controller #1")
+	Name (_ADR, 0x001E0003)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -658,6 +685,7 @@ Device (UAR2)
 	Name (_HID, "80860F0A")
 	Name (_UID, 2)
 	Name (_DDN, "HS-UART Controller #2")
+	Name (_ADR, 0x001E0004)
 
 	Name (RBUF, ResourceTemplate()
 	{
