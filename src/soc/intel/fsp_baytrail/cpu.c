@@ -55,6 +55,21 @@ static int adjust_apic_id(int index, int apic_id)
 }
 
 /* Core level MSRs */
+const struct reg_script package_msr_script[] = {
+	/* Set Package TDP to 8W (250 * 32 mW) */
+	REG_MSR_WRITE(MSR_PKG_POWER_LIMIT, 0x3880fa),
+	//REG_MSR_RMW(MSR_PP1_POWER_LIMIT, ~(0x7f << 17), 0),
+	//REG_MSR_WRITE(MSR_CPU_THERM_CFG1, 0x00000305), // 0x305 is default
+	REG_MSR_WRITE(MSR_CPU_THERM_CFG2, 0x0405500d), // average temp
+	//REG_MSR_WRITE(MSR_CPU_THERM_SENS_CFG, 0x27), // not needed?
+	REG_MSR_OR(MSR_IA32_TEMPERATURE_TARGET, 10 << 24), // trigger 10C below tjMax
+	REG_MSR_WRITE(MSR_PKG_TURBO_CFG1, 0x00000d02), // use RAPL + THERM
+	//REG_MSR_WRITE(MSR_CPU_TURBO_WKLD_CFG1, 0x200b), // tunable
+	//REG_MSR_WRITE(MSR_CPU_TURBO_WKLD_CFG2, 0),
+	REG_SCRIPT_END
+};
+
+/* Core level MSRs */
 const struct reg_script core_msr_script[] = {
 	/* Dynamic L2 shrink enable and threshold */
 	REG_MSR_RMW(MSR_PMG_CST_CONFIG_CONTROL, ~0x3f000f, 0xe0008),
@@ -81,6 +96,9 @@ void baytrail_init_cpus(device_t dev)
 	mp_params.flight_plan = &mp_steps[0];
 	mp_params.num_records = ARRAY_SIZE(mp_steps);
 	mp_params.microcode_pointer = pattrs->microcode_patch;
+
+	/* Set package MSRs */
+	reg_script_run(package_msr_script);
 
 	if (mp_init(cpu_bus, &mp_params)) {
 		printk(BIOS_ERR, "MP initialization failure.\n");
