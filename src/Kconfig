@@ -130,6 +130,14 @@ config STATIC_OPTION_TABLE
 	  every boot.  Use this if you want the NVRAM configuration to
 	  never be modified from its default values.
 
+config STATIC_OPTION_TABLE_NAME
+	bool "Use cmos_default_name() to get the CMOS filename"
+	default n
+	depends on STATIC_OPTION_TABLE
+	help
+	  Enable this option and define cmos_default_name() to return the CBFS
+	  filename to load the static option table.
+
 config UNCOMPRESSED_RAMSTAGE
 	bool
 	default n
