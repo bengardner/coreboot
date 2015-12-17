@@ -34,10 +34,18 @@ static void bootblock_mainboard_init(void)
 #endif
 
 #if CONFIG_USE_OPTION_TABLE
+
+#if CONFIG_STATIC_OPTION_TABLE_NAME
+const char *cmos_default_name(void);
+#define CMOS_DEFAULT_NAME cmos_default_name()
+#else
+#define CMOS_DEFAULT_NAME "cmos.default"
+#endif
+
 static void sanitize_cmos(void)
 {
 	if (cmos_error() || !cmos_chksum_valid() || IS_ENABLED(CONFIG_STATIC_OPTION_TABLE)) {
-		unsigned char *cmos_default = (unsigned char*)walkcbfs("cmos.default");
+		unsigned char *cmos_default = (unsigned char*)walkcbfs(CMOS_DEFAULT_NAME);
 		if (cmos_default) {
 			int i;
 			cmos_disable_rtc();
