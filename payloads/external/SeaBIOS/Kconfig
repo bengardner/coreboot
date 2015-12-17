@@ -1,4 +1,5 @@
 if PAYLOAD_SEABIOS
+menu SeaBIOS
 
 choice
 	prompt "SeaBIOS version"
@@ -12,8 +13,119 @@ config SEABIOS_MASTER
 	bool "master"
 	help
 	  Newest SeaBIOS version
+config SEABIOS_CUSTOM
+	bool "custom"
+	help
+	  Use an alternate SeaBIOS repo and/or branch.
 
 endchoice
+
+if SEABIOS_CUSTOM
+config SEABIOS_GIT_REPO
+	prompt "SeaBIOS GIT Repository"
+	default "http://review.coreboot.org/p/seabios.git"
+	string
+	help
+	  Set the SeaBIOS GIT repository URL.
+	  The default is http://review.coreboot.org/p/seabios.git
+
+config SEABIOS_GIT_BRANCH
+	prompt "SeaBIOS GIT Branch"
+	default "master"
+	string
+	help
+	  The branch/tag to check out when building SeaBIOS.
+
+endif
+
+config SEABIOS_ADD_BOOTORDER
+	bool "Add a Bootorder file for SeaBIOS to CBFS"
+	default n
+	help
+	  Add a bootorder file to control the boot order in SeaBIOS.
+	  for more information go to
+	  http://www.coreboot.org/SeaBIOS#Configuring_boot_order
+
+config SEABIOS_BOOTORDER_FILE
+	string "bootorder source path and filename"
+	depends on SEABIOS_ADD_BOOTORDER
+	default ""
+	help
+	  Add a bootorder file to control the boot order in SeaBIOS.
+	  for more information go to
+	  http://www.coreboot.org/SeaBIOS#Configuring_boot_order
+
+if BOOTSPLASH
+comment 'SeaBIOS will use the bootsplash file that was enabled in the Display menu'
+endif # BOOTSPLASH
+
+config SEABIOS_ADD_BOOTSPLASH
+	bool "Add bootsplash file for SeaBIOS to CBFS"
+	depends on !BOOTSPLASH
+	default y if !BOOTSPLASH
+	help
+	  Add a bootsplash file, which SeaBIOS will display before the
+	  F12 prompt.  Depends on having a VGA BIOS in CBFS or having
+	  a plug-in graphics card that provides its own option ROM.
+
+if !BOOTSPLASH && SEABIOS_ADD_BOOTSPLASH
+
+config SEABIOS_BOOTSPLASH_FILE
+	string "bootsplash path and filename"
+	default "../sage/sage_eval.jpg"
+	help
+	  The path and filename of the file to use as graphical bootsplash
+	  screen. The file format has to be jpg.
+
+config SEABIOS_BOOTSPLASH_LZMA
+	bool "Compress the bootsplash image in CBFS"
+	help
+	  Compress the bootsplash image using lzma.
+
+config SEABIOS_BOOTSPLASH_ADDRESS
+	string "bootsplash image address in CBFS"
+	help
+	  Place the bootsplash image at a specific address.  If left blank,
+	  the bootsplash image will be placed at an unused address range in CBFS.
+	  If an address is specified, it must point to an unused range within the
+	  boot ROM device.
+
+endif # !BOOTSPLASH && SEABIOS_ADD_BOOTSPLASH
+
+config SEABIOS_ADD_BOOT_MENU_WAIT
+	bool "Add a SeabBIOS BOOT-MENU-WAIT file to CBFS"
+	default y
+	help
+	  This modifies SeaBIOS's default delay when pausing at the
+	  'Press XXX for Boot Menu' prompt
+
+config SEABIOS_BOOT_MENU_WAIT_TIME
+	int "BOOT-MENU-WAIT time in msecs"
+	depends on SEABIOS_ADD_BOOT_MENU_WAIT
+	default -1
+	help
+	  This modifies SeaBIOS's default delay when pausing at the
+	  'Press XXX for Boot Menu' prompt.  A value of -1 (4294967295)
+	  causes SeaBIOS to wait for a keypress indefinitely.
+
+config SEABIOS_ADD_BOOT_MENU_KEY
+	bool "Add a SeabBIOS BOOT-MENU-KEY file to CBFS"
+	default n
+	help
+	  This changes the key that takes SeaBIOS into the boot menu.
+	  The built-in default is F12.
+
+config SEABIOS_BOOT_MENU_KEY
+	string "BOOT-MENU-KEY value"
+	depends on SEABIOS_ADD_BOOT_MENU_KEY
+	default 0x0000003231460086
+	help
+	  This is an encoded scancode and text { u16 code; char text[6]; }.
+	  Popular choices:
+	    ESC = 0x0000004353450001
+	    F1  = 0x000000003146003b
+	    F2  = 0x000000003246003c
+	    F12 = 0x0000003231460086
 
 config SEABIOS_PS2_TIMEOUT
 	prompt "PS/2 keyboard controller initialization timeout (milliseconds)"
@@ -62,4 +174,5 @@ config PAYLOAD_VGABIOS_FILE
 	depends on SEABIOS_VGA_COREBOOT
 	default "payloads/external/SeaBIOS/seabios/out/vgabios.bin"
 
+endmenu
 endif

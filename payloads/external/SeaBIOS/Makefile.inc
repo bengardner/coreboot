@@ -1,5 +1,8 @@
 TAG-$(CONFIG_SEABIOS_MASTER)=origin/master
 TAG-$(CONFIG_SEABIOS_STABLE)=01a84bea2d28a19d2405c1ecac4bdef17683cc0c
+ifneq ($(CONFIG_SEABIOS_GIT_BRANCH),)
+TAG-y=$(CONFIG_SEABIOS_GIT_BRANCH)
+endif
 
 unexport KCONFIG_AUTOHEADER
 unexport KCONFIG_AUTOCONFIG
@@ -10,9 +13,24 @@ unexport KCONFIG_NEGATIVES
 
 all: build
 
+# If we have a custom SeaBIOS, we don't want to mess with the code
+# or config after initial checkout.
+ifneq ($(CONFIG_SEABIOS_CUSTOM),)
+BUILD_DEP:=seabios
+else
+BUILD_DEP:=config
+endif
+
 seabios:
-	echo "    Cloning SeaBIOS from Git"
+	echo "    Cloning SeaBIOS from $(CONFIG_SEABIOS_GIT_REPO)"
+ifneq ($(CONFIG_SEABIOS_GIT_REPO),)
+	git clone $(CONFIG_SEABIOS_GIT_REPO) seabios
+else
 	git clone http://review.coreboot.org/p/seabios.git seabios
+endif
+ifneq ($(CONFIG_SEABIOS_CUSTOM),)
+	cd seabios; git checkout -b coreboot $(TAG-y)
+endif
 
 fetch: seabios
 	cd seabios; git show $(TAG-y) >/dev/null 2>&1 ;	if [ $$? -ne 0 ]; \
@@ -50,7 +68,7 @@ endif
 	#echo "# CONFIG_SMBIOS is not set" >> seabios/.config
 	$(MAKE) -C seabios olddefconfig OUT=out/
 
-build: config
+build: $(BUILD_DEP)
 	echo "    MAKE       SeaBIOS $(TAG-y)"
 	$(MAKE) -C seabios OUT=out/
 
