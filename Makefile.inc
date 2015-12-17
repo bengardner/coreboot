@@ -829,6 +829,30 @@ cbfs-files-$(CONFIG_BOOTSPLASH_IMAGE) += bootsplash.jpg
 bootsplash.jpg-file := $(call strip_quotes,$(CONFIG_BOOTSPLASH_FILE))
 bootsplash.jpg-type := bootsplash
 
+cbfs-files-$(CONFIG_SEABIOS_ADD_BOOTORDER) += bootorder
+bootorder-file := $(call strip_quotes,$(CONFIG_SEABIOS_BOOTORDER_FILE))
+bootorder-type := raw
+
+ifeq ($(CONFIG_SEABIOS_ADD_BOOTSPLASH),y)
+BOOTSPLASH_FILE := $(call strip_quotes,$(CONFIG_SEABIOS_BOOTSPLASH_FILE))
+ifneq ($(filter %.bmp,$(BOOTSPLASH_FILE)),)
+BOOTSPLASH_NAME:=bootsplash.bmp
+else
+BOOTSPLASH_NAME:=bootsplash.jpg
+endif
+ifeq ($(CONFIG_SEABIOS_BOOTSPLASH_LZMA),y)
+BOOTSPLASH_NAME:=$(BOOTSPLASH_NAME).lzma
+$(BOOTSPLASH_NAME)-compression := lzma
+endif
+ifneq ($(CONFIG_SEABIOS_BOOTSPLASH_ADDRESS),)
+$(BOOTSPLASH_NAME)-position := $(CONFIG_SEABIOS_BOOTSPLASH_ADDRESS)
+endif
+cbfs-files-y += $(BOOTSPLASH_NAME)
+$(BOOTSPLASH_NAME)-file := $(BOOTSPLASH_FILE)
+$(BOOTSPLASH_NAME)-type := bootsplash
+endif
+
+
 cbfs-files-$(CONFIG_BOARD_ID_MANUAL) += board_id
 board_id-file := $(obj)/board_id
 board_id-type := raw
