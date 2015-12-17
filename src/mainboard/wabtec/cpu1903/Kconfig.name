@@ -1,0 +1,2 @@
+config BOARD_WABTEC_CPU1903
+	bool "CPU1903 based on the Bayley Bay FSP-based CRB"
