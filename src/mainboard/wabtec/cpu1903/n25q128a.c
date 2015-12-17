@@ -5,7 +5,7 @@
  *
  * License: GPL 2 or later
  */
-#include <baytrail/spi.h>
+#include <soc/spi.h>
 #include <string.h>
 
 /*

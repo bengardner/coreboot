@@ -31,11 +31,11 @@
 #include <device/pci_ids.h>
 #include <cpu/cpu.h>
 #include <cpu/x86/msr.h>
-#include <baytrail/acpi.h>
-#include <baytrail/nvs.h>
-#include <baytrail/iomap.h>
+#include <soc/acpi.h>
+#include <soc/nvs.h>
+#include <soc/iomap.h>
 #ifdef BNG_ACPI_I2C_TEST
-#include <baytrail/pci_devs.h>
+#include <soc/pci_devs.h>
 #endif
 
 void acpi_create_gnvs(global_nvs_t *gnvs)

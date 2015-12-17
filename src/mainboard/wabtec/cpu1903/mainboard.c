@@ -32,8 +32,8 @@
 #include <string.h>
 #include <delay.h>
 #include <smbios.h>
-#include <soc/intel/fsp_baytrail/baytrail/i2c.h>
-#include <soc/intel/fsp_baytrail/baytrail/msr.h>
+#include <soc/i2c.h>
+#include <soc/msr.h>
 #include "crc16.h"
 #include <pc80/mc146818rtc.h>
 #include <arch/acpi.h>
