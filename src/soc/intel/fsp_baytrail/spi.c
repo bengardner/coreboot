@@ -318,9 +318,7 @@ void spi_init(void)
 		cntlr.databytes = sizeof(ich9_spi->fdata);
 		cntlr.status = &ich9_spi->ssfs;
 		cntlr.control = (uint16_t *)ich9_spi->ssfc;
-		cntlr.bbar = &ich9_spi->bbar;
 		cntlr.preop = &ich9_spi->preop;
-		ich_set_bbar(0);
 	}
 }
 
