@@ -1,0 +1,5 @@
+Board name: CPU1903
+Category: custom
+ROM protocol: SPI
+ROM socketed: n
+Release year: 2015

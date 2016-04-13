@@ -1,0 +1,688 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config
+		Name="Release"
+		OutputFile="">
+		<Menu>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine="make"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine="make clean &amp;&amp; make"/>
+			</Target>
+			<Target
+				Name="PCLint"
+				MenuCaption="&amp;PCLint"
+				RunFromDir="%rw">
+				<Exec CmdLine="S:\Apps\PCLint -u %f"/>
+			</Target>
+		</Menu>
+	</Config>
+	<CompatibleVersions>
+		<PrevVersion VersionNumber="9.0"/>
+		<PrevVersion VersionNumber="9.1"/>
+	</CompatibleVersions>
+	<Files AutoFolders="DirectoryView">
+		<Folder Name="3rdparty">
+			<Folder Name="vboot">
+				<Folder Name="firmware">
+					<Folder Name="2lib">
+						<Folder Name="include">
+							<F N="3rdparty/vboot/firmware/2lib/include/2api.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2common.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2crc8.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2crypto.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2fw_hash_tags.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2id.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2misc.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2nvstorage.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2nvstorage_fields.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2recovery_reasons.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2return_codes.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2rsa.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2secdata.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2sha.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2struct.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2sysincludes.h"/>
+							<F N="3rdparty/vboot/firmware/2lib/include/2tpm_bootmode.h"/>
+						</Folder>
+					</Folder>
+					<Folder Name="include">
+						<F N="3rdparty/vboot/firmware/include/bmpblk_header.h"/>
+						<F N="3rdparty/vboot/firmware/include/gbb_access.h"/>
+						<F N="3rdparty/vboot/firmware/include/gbb_header.h"/>
+						<F N="3rdparty/vboot/firmware/include/gpt.h"/>
+						<F N="3rdparty/vboot/firmware/include/gpt_misc.h"/>
+						<F N="3rdparty/vboot/firmware/include/region.h"/>
+						<F N="3rdparty/vboot/firmware/include/tlcl.h"/>
+						<F N="3rdparty/vboot/firmware/include/tss_constants.h"/>
+						<F N="3rdparty/vboot/firmware/include/vb2_api.h"/>
+						<F N="3rdparty/vboot/firmware/include/vboot_api.h"/>
+						<F N="3rdparty/vboot/firmware/include/vboot_nvstorage.h"/>
+						<F N="3rdparty/vboot/firmware/include/vboot_struct.h"/>
+					</Folder>
+				</Folder>
+			</Folder>
+		</Folder>
+		<Folder Name="src">
+			<Folder Name="arch">
+				<Folder Name="x86">
+					<Folder Name="include">
+						<Folder Name="arch">
+							<Folder Name="smp">
+								<F N="src/arch/x86/include/arch/smp/atomic.h"/>
+								<F N="src/arch/x86/include/arch/smp/mpspec.h"/>
+								<F N="src/arch/x86/include/arch/smp/spinlock.h"/>
+							</Folder>
+							<F N="src/arch/x86/include/arch/acpi.h"/>
+							<F N="src/arch/x86/include/arch/acpigen.h"/>
+							<F N="src/arch/x86/include/arch/byteorder.h"/>
+							<F N="src/arch/x86/include/arch/cbfs.h"/>
+							<F N="src/arch/x86/include/arch/cpu.h"/>
+							<F N="src/arch/x86/include/arch/early_variables.h"/>
+							<F N="src/arch/x86/include/arch/ebda.h"/>
+							<F N="src/arch/x86/include/arch/exception.h"/>
+							<F N="src/arch/x86/include/arch/header.ld"/>
+							<F N="src/arch/x86/include/arch/hlt.h"/>
+							<F N="src/arch/x86/include/arch/interrupt.h"/>
+							<F N="src/arch/x86/include/arch/io.h"/>
+							<F N="src/arch/x86/include/arch/ioapic.h"/>
+							<F N="src/arch/x86/include/arch/memlayout.h"/>
+							<F N="src/arch/x86/include/arch/pci_io_cfg.h"/>
+							<F N="src/arch/x86/include/arch/pci_mmio_cfg.h"/>
+							<F N="src/arch/x86/include/arch/pci_ops.h"/>
+							<F N="src/arch/x86/include/arch/pirq_routing.h"/>
+							<F N="src/arch/x86/include/arch/registers.h"/>
+							<F N="src/arch/x86/include/arch/rom_segs.h"/>
+							<F N="src/arch/x86/include/arch/stages.h"/>
+						</Folder>
+						<F N="src/arch/x86/include/stdint.h"/>
+					</Folder>
+					<F N="src/arch/x86/acpi.c"/>
+					<F N="src/arch/x86/acpigen.c"/>
+					<F N="src/arch/x86/assembly_entry.S"/>
+					<F N="src/arch/x86/boot.c"/>
+					<F N="src/arch/x86/bootblock.ld"/>
+					<F N="src/arch/x86/bootblock_simple.c"/>
+					<F N="src/arch/x86/c_start.S"/>
+					<F N="src/arch/x86/car.ld"/>
+					<F N="src/arch/x86/cbfs_and_run.c"/>
+					<F N="src/arch/x86/cbmem.c"/>
+					<F N="src/arch/x86/cpu.c"/>
+					<F N="src/arch/x86/cpu_common.c"/>
+					<F N="src/arch/x86/ebda.c"/>
+					<F N="src/arch/x86/exception.c"/>
+					<F N="src/arch/x86/failover.ld"/>
+					<F N="src/arch/x86/gdt.c"/>
+					<F N="src/arch/x86/id.ld"/>
+					<F N="src/arch/x86/id.S"/>
+					<F N="src/arch/x86/Kconfig"/>
+					<F N="src/arch/x86/Makefile.inc"/>
+					<F N="src/arch/x86/memcpy.c"/>
+					<F N="src/arch/x86/memlayout.ld"/>
+					<F N="src/arch/x86/memmove.c"/>
+					<F N="src/arch/x86/memset.c"/>
+					<F N="src/arch/x86/mmap_boot.c"/>
+					<F N="src/arch/x86/pci_ops_conf1.c"/>
+					<F N="src/arch/x86/pci_ops_mmconf.c"/>
+					<F N="src/arch/x86/prologue.inc"/>
+					<F N="src/arch/x86/smbios.c"/>
+					<F N="src/arch/x86/tables.c"/>
+					<F N="src/arch/x86/timestamp.c"/>
+					<F N="src/arch/x86/walkcbfs.S"/>
+				</Folder>
+			</Folder>
+			<Folder Name="commonlib">
+				<Folder Name="include">
+					<Folder Name="commonlib">
+						<F N="src/commonlib/include/commonlib/cbfs.h"/>
+						<F N="src/commonlib/include/commonlib/cbfs_serialized.h"/>
+						<F N="src/commonlib/include/commonlib/cbmem_id.h"/>
+						<F N="src/commonlib/include/commonlib/compression.h"/>
+						<F N="src/commonlib/include/commonlib/coreboot_tables.h"/>
+						<F N="src/commonlib/include/commonlib/endian.h"/>
+						<F N="src/commonlib/include/commonlib/fmap_serialized.h"/>
+						<F N="src/commonlib/include/commonlib/fsp1_1.h"/>
+						<F N="src/commonlib/include/commonlib/helpers.h"/>
+						<F N="src/commonlib/include/commonlib/loglevel.h"/>
+						<F N="src/commonlib/include/commonlib/mem_pool.h"/>
+						<F N="src/commonlib/include/commonlib/region.h"/>
+						<F N="src/commonlib/include/commonlib/rmodule-defs.h"/>
+						<F N="src/commonlib/include/commonlib/timestamp_serialized.h"/>
+					</Folder>
+				</Folder>
+				<F N="src/commonlib/cbfs.c"/>
+				<F N="src/commonlib/fsp1_1_relocate.c"/>
+				<F N="src/commonlib/lz4.c.inc"/>
+				<F N="src/commonlib/lz4_wrapper.c"/>
+				<F N="src/commonlib/Makefile.inc"/>
+				<F N="src/commonlib/mem_pool.c"/>
+				<F N="src/commonlib/region.c"/>
+			</Folder>
+			<Folder Name="console">
+				<F N="src/console/console.c"/>
+				<F N="src/console/die.c"/>
+				<F N="src/console/init.c"/>
+				<F N="src/console/Kconfig"/>
+				<F N="src/console/Makefile.inc"/>
+				<F N="src/console/post.c"/>
+				<F N="src/console/printk.c"/>
+				<F N="src/console/vsprintf.c"/>
+				<F N="src/console/vtxprintf.c"/>
+			</Folder>
+			<Folder Name="cpu">
+				<Folder Name="intel">
+					<Folder Name="microcode">
+						<F N="src/cpu/intel/microcode/Makefile.inc"/>
+						<F N="src/cpu/intel/microcode/microcode.c"/>
+					</Folder>
+					<Folder Name="turbo">
+						<F N="src/cpu/intel/turbo/Kconfig"/>
+						<F N="src/cpu/intel/turbo/Makefile.inc"/>
+						<F N="src/cpu/intel/turbo/turbo.c"/>
+					</Folder>
+				</Folder>
+				<Folder Name="x86">
+					<Folder Name="16bit">
+						<F N="src/cpu/x86/16bit/entry16.inc"/>
+						<F N="src/cpu/x86/16bit/entry16.ld"/>
+						<F N="src/cpu/x86/16bit/reset16.inc"/>
+						<F N="src/cpu/x86/16bit/reset16.ld"/>
+					</Folder>
+					<Folder Name="32bit">
+						<F N="src/cpu/x86/32bit/entry32.inc"/>
+					</Folder>
+					<Folder Name="cache">
+						<F N="src/cpu/x86/cache/cache.c"/>
+						<F N="src/cpu/x86/cache/Makefile.inc"/>
+					</Folder>
+					<Folder Name="lapic">
+						<F N="src/cpu/x86/lapic/boot_cpu.c"/>
+						<F N="src/cpu/x86/lapic/lapic.c"/>
+						<F N="src/cpu/x86/lapic/lapic_cpu_init.c"/>
+						<F N="src/cpu/x86/lapic/Makefile.inc"/>
+						<F N="src/cpu/x86/lapic/secondary.S"/>
+					</Folder>
+					<Folder Name="mtrr">
+						<F N="src/cpu/x86/mtrr/Makefile.inc"/>
+						<F N="src/cpu/x86/mtrr/mtrr.c"/>
+					</Folder>
+					<Folder Name="name">
+						<F N="src/cpu/x86/name/Makefile.inc"/>
+						<F N="src/cpu/x86/name/name.c"/>
+					</Folder>
+					<Folder Name="smm">
+						<F N="src/cpu/x86/smm/Makefile.inc"/>
+						<F N="src/cpu/x86/smm/smm_module_handler.c"/>
+						<F N="src/cpu/x86/smm/smm_module_loader.c"/>
+						<F N="src/cpu/x86/smm/smm_stub.S"/>
+					</Folder>
+					<Folder Name="tsc">
+						<F N="src/cpu/x86/tsc/delay_tsc.c"/>
+						<F N="src/cpu/x86/tsc/Makefile.inc"/>
+					</Folder>
+					<F N="src/cpu/x86/car.c"/>
+					<F N="src/cpu/x86/fpu_enable.inc"/>
+					<F N="src/cpu/x86/Kconfig"/>
+					<F N="src/cpu/x86/Makefile.inc"/>
+					<F N="src/cpu/x86/mp_init.c"/>
+					<F N="src/cpu/x86/sipi_vector.S"/>
+				</Folder>
+			</Folder>
+			<Folder Name="device">
+				<F N="src/device/cardbus_device.c"/>
+				<F N="src/device/cpu_device.c"/>
+				<F N="src/device/device.c"/>
+				<F N="src/device/device_romstage.c"/>
+				<F N="src/device/device_util.c"/>
+				<F N="src/device/Kconfig"/>
+				<F N="src/device/Makefile.inc"/>
+				<F N="src/device/pci_class.c"/>
+				<F N="src/device/pci_device.c"/>
+				<F N="src/device/pci_early.c"/>
+				<F N="src/device/pci_ops.c"/>
+				<F N="src/device/pciexp_device.c"/>
+				<F N="src/device/pcix_device.c"/>
+				<F N="src/device/pnp_device.c"/>
+				<F N="src/device/root_device.c"/>
+				<F N="src/device/smbus_ops.c"/>
+			</Folder>
+			<Folder Name="drivers">
+				<Folder Name="elog">
+					<F N="src/drivers/elog/boot_count.c"/>
+					<F N="src/drivers/elog/elog.c"/>
+					<F N="src/drivers/elog/elog_internal.h"/>
+					<F N="src/drivers/elog/gsmi.c"/>
+					<F N="src/drivers/elog/Kconfig"/>
+					<F N="src/drivers/elog/Makefile.inc"/>
+				</Folder>
+				<Folder Name="intel">
+					<Folder Name="fsp1_0">
+						<F N="src/drivers/intel/fsp1_0/cache_as_ram.inc"/>
+						<F N="src/drivers/intel/fsp1_0/fastboot_cache.c"/>
+						<F N="src/drivers/intel/fsp1_0/fsp_util.c"/>
+						<F N="src/drivers/intel/fsp1_0/fsp_util.h"/>
+						<F N="src/drivers/intel/fsp1_0/fsp_values.h"/>
+						<F N="src/drivers/intel/fsp1_0/hob.c"/>
+						<F N="src/drivers/intel/fsp1_0/Kconfig"/>
+						<F N="src/drivers/intel/fsp1_0/Makefile.inc"/>
+					</Folder>
+					<Folder Name="wifi">
+						<F N="src/drivers/intel/wifi/Makefile.inc"/>
+						<F N="src/drivers/intel/wifi/wifi.c"/>
+					</Folder>
+				</Folder>
+				<Folder Name="pc80">
+					<Folder Name="vga">
+						<F N="src/drivers/pc80/vga/Makefile.inc"/>
+						<F N="src/drivers/pc80/vga/vga.c"/>
+						<F N="src/drivers/pc80/vga/vga.h"/>
+						<F N="src/drivers/pc80/vga/vga_font_8x16.c"/>
+						<F N="src/drivers/pc80/vga/vga_io.c"/>
+						<F N="src/drivers/pc80/vga/vga_palette.c"/>
+					</Folder>
+					<F N="src/drivers/pc80/i8254.c"/>
+					<F N="src/drivers/pc80/i8259.c"/>
+					<F N="src/drivers/pc80/isa-dma.c"/>
+					<F N="src/drivers/pc80/Kconfig"/>
+					<F N="src/drivers/pc80/keyboard.c"/>
+					<F N="src/drivers/pc80/Makefile.inc"/>
+					<F N="src/drivers/pc80/mc146818rtc.c"/>
+					<F N="src/drivers/pc80/mc146818rtc_early.c"/>
+				</Folder>
+				<Folder Name="spi">
+					<F N="src/drivers/spi/adesto.c"/>
+					<F N="src/drivers/spi/amic.c"/>
+					<F N="src/drivers/spi/atmel.c"/>
+					<F N="src/drivers/spi/eon.c"/>
+					<F N="src/drivers/spi/gigadevice.c"/>
+					<F N="src/drivers/spi/Kconfig"/>
+					<F N="src/drivers/spi/macronix.c"/>
+					<F N="src/drivers/spi/Makefile.inc"/>
+					<F N="src/drivers/spi/spansion.c"/>
+					<F N="src/drivers/spi/spi_flash.c"/>
+					<F N="src/drivers/spi/spi_flash_internal.h"/>
+					<F N="src/drivers/spi/sst.c"/>
+					<F N="src/drivers/spi/stmicro.c"/>
+					<F N="src/drivers/spi/winbond.c"/>
+				</Folder>
+				<Folder Name="uart">
+					<F N="src/drivers/uart/Kconfig"/>
+					<F N="src/drivers/uart/Makefile.inc"/>
+					<F N="src/drivers/uart/uart8250io.c"/>
+					<F N="src/drivers/uart/uart8250reg.h"/>
+					<F N="src/drivers/uart/util.c"/>
+				</Folder>
+			</Folder>
+			<Folder Name="include">
+				<Folder Name="boot">
+					<F N="src/include/boot/coreboot_tables.h"/>
+					<F N="src/include/boot/tables.h"/>
+				</Folder>
+				<Folder Name="console">
+					<F N="src/include/console/cbmem_console.h"/>
+					<F N="src/include/console/console.h"/>
+					<F N="src/include/console/ne2k.h"/>
+					<F N="src/include/console/post_codes.h"/>
+					<F N="src/include/console/qemu_debugcon.h"/>
+					<F N="src/include/console/spi.h"/>
+					<F N="src/include/console/spkmodem.h"/>
+					<F N="src/include/console/streams.h"/>
+					<F N="src/include/console/uart.h"/>
+					<F N="src/include/console/usb.h"/>
+					<F N="src/include/console/vtxprintf.h"/>
+				</Folder>
+				<Folder Name="cpu">
+					<Folder Name="intel">
+						<F N="src/include/cpu/intel/microcode.h"/>
+						<F N="src/include/cpu/intel/speedstep.h"/>
+						<F N="src/include/cpu/intel/turbo.h"/>
+					</Folder>
+					<Folder Name="x86">
+						<F N="src/include/cpu/x86/cache.h"/>
+						<F N="src/include/cpu/x86/cr.h"/>
+						<F N="src/include/cpu/x86/gdt.h"/>
+						<F N="src/include/cpu/x86/lapic.h"/>
+						<F N="src/include/cpu/x86/lapic_def.h"/>
+						<F N="src/include/cpu/x86/mp.h"/>
+						<F N="src/include/cpu/x86/msr.h"/>
+						<F N="src/include/cpu/x86/mtrr.h"/>
+						<F N="src/include/cpu/x86/name.h"/>
+						<F N="src/include/cpu/x86/post_code.h"/>
+						<F N="src/include/cpu/x86/smm.h"/>
+						<F N="src/include/cpu/x86/tsc.h"/>
+					</Folder>
+					<F N="src/include/cpu/cpu.h"/>
+				</Folder>
+				<Folder Name="device">
+					<F N="src/include/device/cardbus.h"/>
+					<F N="src/include/device/device.h"/>
+					<F N="src/include/device/hypertransport.h"/>
+					<F N="src/include/device/hypertransport_def.h"/>
+					<F N="src/include/device/path.h"/>
+					<F N="src/include/device/pci.h"/>
+					<F N="src/include/device/pci_def.h"/>
+					<F N="src/include/device/pci_ids.h"/>
+					<F N="src/include/device/pci_ops.h"/>
+					<F N="src/include/device/pci_rom.h"/>
+					<F N="src/include/device/pciexp.h"/>
+					<F N="src/include/device/pcix.h"/>
+					<F N="src/include/device/pnp.h"/>
+					<F N="src/include/device/pnp_def.h"/>
+					<F N="src/include/device/resource.h"/>
+					<F N="src/include/device/smbus.h"/>
+					<F N="src/include/device/smbus_def.h"/>
+				</Folder>
+				<Folder Name="pc80">
+					<F N="src/include/pc80/i8254.h"/>
+					<F N="src/include/pc80/i8259.h"/>
+					<F N="src/include/pc80/isa-dma.h"/>
+					<F N="src/include/pc80/keyboard.h"/>
+					<F N="src/include/pc80/mc146818rtc.h"/>
+					<F N="src/include/pc80/vga.h"/>
+					<F N="src/include/pc80/vga_io.h"/>
+				</Folder>
+				<Folder Name="smp">
+					<F N="src/include/smp/atomic.h"/>
+					<F N="src/include/smp/node.h"/>
+					<F N="src/include/smp/spinlock.h"/>
+				</Folder>
+				<Folder Name="superio">
+					<F N="src/include/superio/conf_mode.h"/>
+				</Folder>
+				<F N="src/include/assert.h"/>
+				<F N="src/include/b64_decode.h"/>
+				<F N="src/include/bcd.h"/>
+				<F N="src/include/boardid.h"/>
+				<F N="src/include/boot_device.h"/>
+				<F N="src/include/bootmem.h"/>
+				<F N="src/include/bootmode.h"/>
+				<F N="src/include/bootstate.h"/>
+				<F N="src/include/cbfs.h"/>
+				<F N="src/include/cbmem.h"/>
+				<F N="src/include/delay.h"/>
+				<F N="src/include/elog.h"/>
+				<F N="src/include/endian.h"/>
+				<F N="src/include/fallback.h"/>
+				<F N="src/include/fmap.h"/>
+				<F N="src/include/halt.h"/>
+				<F N="src/include/imd.h"/>
+				<F N="src/include/ip_checksum.h"/>
+				<F N="src/include/kconfig.h"/>
+				<F N="src/include/lib.h"/>
+				<F N="src/include/memlayout.h"/>
+				<F N="src/include/memory_info.h"/>
+				<F N="src/include/memrange.h"/>
+				<F N="src/include/option.h"/>
+				<F N="src/include/program_loading.h"/>
+				<F N="src/include/reg_script.h"/>
+				<F N="src/include/reset.h"/>
+				<F N="src/include/rmodule.h"/>
+				<F N="src/include/romstage_handoff.h"/>
+				<F N="src/include/rtc.h"/>
+				<F N="src/include/rules.h"/>
+				<F N="src/include/smbios.h"/>
+				<F N="src/include/spd.h"/>
+				<F N="src/include/spi-generic.h"/>
+				<F N="src/include/spi_flash.h"/>
+				<F N="src/include/stage_cache.h"/>
+				<F N="src/include/stddef.h"/>
+				<F N="src/include/stdlib.h"/>
+				<F N="src/include/string.h"/>
+				<F N="src/include/swab.h"/>
+				<F N="src/include/symbols.h"/>
+				<F N="src/include/thread.h"/>
+				<F N="src/include/timer.h"/>
+				<F N="src/include/timestamp.h"/>
+				<F N="src/include/trace.h"/>
+				<F N="src/include/types.h"/>
+				<F N="src/include/version.h"/>
+				<F N="src/include/watchdog.h"/>
+			</Folder>
+			<Folder Name="lib">
+				<F N="src/lib/b64_decode.c"/>
+				<F N="src/lib/boot_device.c"/>
+				<F N="src/lib/bootmem.c"/>
+				<F N="src/lib/bootmode.c"/>
+				<F N="src/lib/cbfs.c"/>
+				<F N="src/lib/cbmem_common.c"/>
+				<F N="src/lib/cbmem_console.c"/>
+				<F N="src/lib/compute_ip_checksum.c"/>
+				<F N="src/lib/coreboot_table.c"/>
+				<F N="src/lib/delay.c"/>
+				<F N="src/lib/fallback_boot.c"/>
+				<F N="src/lib/fmap.c"/>
+				<F N="src/lib/gcc.c"/>
+				<F N="src/lib/halt.c"/>
+				<F N="src/lib/hardwaremain.c"/>
+				<F N="src/lib/hexdump.c"/>
+				<F N="src/lib/imd.c"/>
+				<F N="src/lib/imd_cbmem.c"/>
+				<F N="src/lib/libgcc.c"/>
+				<F N="src/lib/lzma.c"/>
+				<F N="src/lib/lzmadecode.c"/>
+				<F N="src/lib/lzmadecode.h"/>
+				<F N="src/lib/Makefile.inc"/>
+				<F N="src/lib/malloc.c"/>
+				<F N="src/lib/memchr.c"/>
+				<F N="src/lib/memcmp.c"/>
+				<F N="src/lib/memrange.c"/>
+				<F N="src/lib/prog_loaders.c"/>
+				<F N="src/lib/prog_ops.c"/>
+				<F N="src/lib/program.ld"/>
+				<F N="src/lib/ramtest.c"/>
+				<F N="src/lib/reg_script.c"/>
+				<F N="src/lib/rmodule.c"/>
+				<F N="src/lib/rmodule.ld"/>
+				<F N="src/lib/selfboot.c"/>
+				<F N="src/lib/stack.c"/>
+				<F N="src/lib/timestamp.c"/>
+				<F N="src/lib/version.c"/>
+			</Folder>
+			<Folder Name="mainboard">
+				<Folder Name="wabtec">
+					<Folder Name="cpu1903">
+						<Folder Name="acpi">
+							<F N="src/mainboard/wabtec/cpu1903/acpi/ec.asl"/>
+							<F N="src/mainboard/wabtec/cpu1903/acpi/mainboard.asl"/>
+							<F N="src/mainboard/wabtec/cpu1903/acpi/superio.asl"/>
+						</Folder>
+						<Folder Name="bootblock">
+							<F N="src/mainboard/wabtec/cpu1903/bootblock/bootblock.c"/>
+						</Folder>
+						<F N="src/mainboard/wabtec/cpu1903/acpi_tables.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/board_info.txt"/>
+						<F N="src/mainboard/wabtec/cpu1903/bootlog.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/bootlog.h"/>
+						<F N="src/mainboard/wabtec/cpu1903/bootorder"/>
+						<F N="src/mainboard/wabtec/cpu1903/cmos.debug.default"/>
+						<F N="src/mainboard/wabtec/cpu1903/cmos.default"/>
+						<F N="src/mainboard/wabtec/cpu1903/cmos.layout"/>
+						<F N="src/mainboard/wabtec/cpu1903/crc16.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/crc16.h"/>
+						<F N="src/mainboard/wabtec/cpu1903/devicetree.cb"/>
+						<F N="src/mainboard/wabtec/cpu1903/dsdt.asl"/>
+						<F N="src/mainboard/wabtec/cpu1903/fadt.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/gpio.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/irqroute.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/irqroute.h"/>
+						<F N="src/mainboard/wabtec/cpu1903/Kconfig"/>
+						<F N="src/mainboard/wabtec/cpu1903/Kconfig.name"/>
+						<F N="src/mainboard/wabtec/cpu1903/mainboard.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/Makefile.inc"/>
+						<F N="src/mainboard/wabtec/cpu1903/n25q128a.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/romstage.c"/>
+						<F N="src/mainboard/wabtec/cpu1903/wabtec-cpu1900-io.h"/>
+						<F N="src/mainboard/wabtec/cpu1903/wabtec-cpu1900.h"/>
+					</Folder>
+				</Folder>
+			</Folder>
+			<Folder Name="soc">
+				<Folder Name="intel">
+					<Folder Name="common">
+						<F N="src/soc/intel/common/acpi.h"/>
+						<F N="src/soc/intel/common/acpi_wake_source.c"/>
+						<F N="src/soc/intel/common/hda_verb.c"/>
+						<F N="src/soc/intel/common/hda_verb.h"/>
+						<F N="src/soc/intel/common/Kconfig"/>
+						<F N="src/soc/intel/common/Makefile.inc"/>
+						<F N="src/soc/intel/common/mma.c"/>
+						<F N="src/soc/intel/common/mma.h"/>
+						<F N="src/soc/intel/common/mrc_cache.c"/>
+						<F N="src/soc/intel/common/mrc_cache.h"/>
+						<F N="src/soc/intel/common/nvm.c"/>
+						<F N="src/soc/intel/common/nvm.h"/>
+						<F N="src/soc/intel/common/reset.c"/>
+						<F N="src/soc/intel/common/util.c"/>
+						<F N="src/soc/intel/common/util.h"/>
+					</Folder>
+					<Folder Name="fsp_baytrail">
+						<Folder Name="acpi">
+							<F N="src/soc/intel/fsp_baytrail/acpi/cpu.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/device_nvs.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/globalnvs.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/gpio.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/irq_helper.h"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/irqlinks.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/irqroute.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/lpc.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/lpe.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/lpss.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/platform.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/scc.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/sleepstates.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/southcluster.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/usb.asl"/>
+							<F N="src/soc/intel/fsp_baytrail/acpi/xhci.asl"/>
+						</Folder>
+						<Folder Name="bootblock">
+							<F N="src/soc/intel/fsp_baytrail/bootblock/bootblock.c"/>
+						</Folder>
+						<Folder Name="fsp">
+							<F N="src/soc/intel/fsp_baytrail/fsp/chipset_fsp_util.c"/>
+							<F N="src/soc/intel/fsp_baytrail/fsp/chipset_fsp_util.h"/>
+							<F N="src/soc/intel/fsp_baytrail/fsp/Kconfig"/>
+							<F N="src/soc/intel/fsp_baytrail/fsp/Makefile.inc"/>
+						</Folder>
+						<Folder Name="include">
+							<Folder Name="soc">
+								<F N="src/soc/intel/fsp_baytrail/include/soc/acpi.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/baytrail.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/device_nvs.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/gpio.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/i2c.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/iomap.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/iosf.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/irq.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/lpc.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/msr.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/nvs.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/pattrs.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/pci_devs.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/pmc.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/ramstage.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/reset.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/romstage.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/smm.h"/>
+								<F N="src/soc/intel/fsp_baytrail/include/soc/spi.h"/>
+							</Folder>
+						</Folder>
+						<Folder Name="romstage">
+							<F N="src/soc/intel/fsp_baytrail/romstage/Makefile.inc"/>
+							<F N="src/soc/intel/fsp_baytrail/romstage/pmc.c"/>
+							<F N="src/soc/intel/fsp_baytrail/romstage/report_platform.c"/>
+							<F N="src/soc/intel/fsp_baytrail/romstage/romstage.c"/>
+							<F N="src/soc/intel/fsp_baytrail/romstage/uart.c"/>
+						</Folder>
+						<F N="src/soc/intel/fsp_baytrail/acpi.c"/>
+						<F N="src/soc/intel/fsp_baytrail/chip.c"/>
+						<F N="src/soc/intel/fsp_baytrail/chip.h"/>
+						<F N="src/soc/intel/fsp_baytrail/cpu.c"/>
+						<F N="src/soc/intel/fsp_baytrail/elog.c"/>
+						<F N="src/soc/intel/fsp_baytrail/gfx.c"/>
+						<F N="src/soc/intel/fsp_baytrail/gpio.c"/>
+						<F N="src/soc/intel/fsp_baytrail/i2c.c"/>
+						<F N="src/soc/intel/fsp_baytrail/iosf.c"/>
+						<F N="src/soc/intel/fsp_baytrail/Kconfig"/>
+						<F N="src/soc/intel/fsp_baytrail/lpe.c"/>
+						<F N="src/soc/intel/fsp_baytrail/lpss.c"/>
+						<F N="src/soc/intel/fsp_baytrail/Makefile.inc"/>
+						<F N="src/soc/intel/fsp_baytrail/memmap.c"/>
+						<F N="src/soc/intel/fsp_baytrail/northcluster.c"/>
+						<F N="src/soc/intel/fsp_baytrail/nvm.c"/>
+						<F N="src/soc/intel/fsp_baytrail/placeholders.c"/>
+						<F N="src/soc/intel/fsp_baytrail/pmutil.c"/>
+						<F N="src/soc/intel/fsp_baytrail/ramstage.c"/>
+						<F N="src/soc/intel/fsp_baytrail/reset.c"/>
+						<F N="src/soc/intel/fsp_baytrail/smihandler.c"/>
+						<F N="src/soc/intel/fsp_baytrail/smm.c"/>
+						<F N="src/soc/intel/fsp_baytrail/southcluster.c"/>
+						<F N="src/soc/intel/fsp_baytrail/spi.c"/>
+						<F N="src/soc/intel/fsp_baytrail/tsc_freq.c"/>
+					</Folder>
+				</Folder>
+			</Folder>
+			<Folder Name="superio">
+				<Folder Name="common">
+					<F N="src/superio/common/conf_mode.c"/>
+				</Folder>
+			</Folder>
+			<Folder Name="vendorcode">
+				<Folder Name="google">
+					<Folder Name="chromeos">
+						<Folder Name="vboot2">
+							<F N="src/vendorcode/google/chromeos/vboot2/Kconfig"/>
+							<F N="src/vendorcode/google/chromeos/vboot2/Makefile.inc"/>
+							<F N="src/vendorcode/google/chromeos/vboot2/misc.h"/>
+						</Folder>
+						<F N="src/vendorcode/google/chromeos/chromeos.h"/>
+						<F N="src/vendorcode/google/chromeos/gnvs.h"/>
+						<F N="src/vendorcode/google/chromeos/Kconfig"/>
+						<F N="src/vendorcode/google/chromeos/Makefile.inc"/>
+						<F N="src/vendorcode/google/chromeos/vboot_common.h"/>
+					</Folder>
+				</Folder>
+				<Folder Name="intel">
+					<Folder Name="fsp1_0">
+						<Folder Name="baytrail">
+							<Folder Name="include">
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/azalia.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fsp.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fspapi.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fspffs.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fspfv.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fsphob.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fspinfoheader.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fspplatform.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fsptypes.h"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/include/fspvpd.h"/>
+							</Folder>
+							<Folder Name="srx">
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/srx/board_fsp.c"/>
+								<F N="src/vendorcode/intel/fsp1_0/baytrail/srx/fsphob.c"/>
+							</Folder>
+						</Folder>
+					</Folder>
+				</Folder>
+			</Folder>
+			<F N="src/Kconfig"/>
+		</Folder>
+		<F N="Makefile"/>
+		<F N="Makefile.inc"/>
+		<F N="README"/>
+		<F N="toolchain.inc"/>
+	</Files>
+</Project>
