@@ -14,46 +14,25 @@
  */
 
 /* This file is derived from the flashrom project. */
+#include <types.h>
+#include <lib.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <bootstate.h>
 #include <delay.h>
 #include <arch/io.h>
 #include <console/console.h>
 #include <device/pci_ids.h>
 #include <spi_flash.h>
+#include <soc/spi.h>
 
 #include <soc/lpc.h>
 #include <soc/pci_devs.h>
 
-#ifdef __SMM__
-#define pci_read_config_byte(dev, reg, targ)\
-	*(targ) = pci_read_config8(dev, reg)
-#define pci_read_config_word(dev, reg, targ)\
-	*(targ) = pci_read_config16(dev, reg)
-#define pci_read_config_dword(dev, reg, targ)\
-	*(targ) = pci_read_config32(dev, reg)
-#define pci_write_config_byte(dev, reg, val)\
-	pci_write_config8(dev, reg, val)
-#define pci_write_config_word(dev, reg, val)\
-	pci_write_config16(dev, reg, val)
-#define pci_write_config_dword(dev, reg, val)\
-	pci_write_config32(dev, reg, val)
-#else /* !__SMM__ */
+#ifndef __SMM__
 #include <device/device.h>
 #include <device/pci.h>
-#define pci_read_config_byte(dev, reg, targ)\
-	*(targ) = pci_read_config8(dev, reg)
-#define pci_read_config_word(dev, reg, targ)\
-	*(targ) = pci_read_config16(dev, reg)
-#define pci_read_config_dword(dev, reg, targ)\
-	*(targ) = pci_read_config32(dev, reg)
-#define pci_write_config_byte(dev, reg, val)\
-	pci_write_config8(dev, reg, val)
-#define pci_write_config_word(dev, reg, val)\
-	pci_write_config16(dev, reg, val)
-#define pci_write_config_dword(dev, reg, val)\
-	pci_write_config32(dev, reg, val)
 #endif /* !__SMM__ */
 
 typedef struct spi_slave ich_spi_slave;
@@ -93,8 +72,11 @@ typedef struct ich9_spi_regs {
 } __attribute__((packed)) ich9_spi_regs;
 
 typedef struct ich_spi_controller {
-	int locked;
-
+	union {
+		ich9_spi_regs *regs;
+		void          *base;
+	};
+	int hw_mode;
 	uint8_t *opmenu;
 	int menubytes;
 	uint16_t *preop;
@@ -144,8 +126,11 @@ enum {
 
 enum {
 	HSFC_FGO =		0x0001,
-	HSFC_FCYCLE_MASK =	0x0006,
-	HSFC_FCYCLE_SHIFT =	1,
+	HSFC_FCYCLE__MASK =	0x0006,
+	HSFC_FCYCLE__READ =	0x0000,
+	HSFC_FCYCLE__WRITE =	0x0004,
+	HSFC_FCYCLE__ERASE =	0x0006,
+	HSFC_FCYCLE__SHIFT =	1,
 	HSFC_FDBC_MASK =	0x3f00,
 	HSFC_FDBC_SHIFT =	8,
 	HSFC_FSMIE =		0x8000
@@ -216,6 +201,8 @@ static void writel_(u32 b, void *addr)
 
 #endif  /* CONFIG_DEBUG_SPI_FLASH ^^^ NOT enabled */
 
+static struct spi_flash *spi_hw_probe(struct spi_slave *spi);
+
 static void write_reg(const void *value, void *dest, uint32_t size)
 {
 	const uint8_t *bvalue = value;
@@ -255,10 +242,17 @@ struct spi_slave *spi_setup_slave(unsigned int bus, unsigned int cs)
 		return NULL;
 	}
 
+	spi_init();
+
 	memset(slave, 0, sizeof(*slave));
 
 	slave->bus = bus;
 	slave->cs = cs;
+	if (cntlr.hw_mode) {
+		slave->force_programmer_specific = 1;
+		slave->programmer_specific_probe = spi_hw_probe;
+	}
+
 	return slave;
 }
 
@@ -272,27 +266,68 @@ static ich9_spi_regs *spi_regs(void)
 #else
 	dev = dev_find_slot(0, PCI_DEVFN(LPC_DEV, LPC_FUNC));
 #endif
-	pci_read_config_dword(dev, SBASE, &sbase);
+	sbase = pci_read_config32(dev, SBASE);
 	sbase &= ~0x1ff;
 
 	return (void *)sbase;
 }
 
+int __attribute__((weak)) mainboard_get_spi_config(struct spi_config *cfg)
+{
+	return -1;
+}
+
 void spi_init(void)
 {
+	if (cntlr.regs || cntlr.data)
+		return;
 	ich9_spi_regs *ich9_spi = spi_regs();
+	cntlr.regs = ich9_spi;
 
-	ichspi_lock = readw_(&ich9_spi->hsfs) & HSFS_FLOCKDN;
-	cntlr.opmenu = ich9_spi->opmenu;
-	cntlr.menubytes = sizeof(ich9_spi->opmenu);
-	cntlr.optype = &ich9_spi->optype;
-	cntlr.addr = &ich9_spi->faddr;
-	cntlr.data = (uint8_t *)ich9_spi->fdata;
-	cntlr.databytes = sizeof(ich9_spi->fdata);
-	cntlr.status = &ich9_spi->ssfs;
-	cntlr.control = (uint16_t *)ich9_spi->ssfc;
-	cntlr.preop = &ich9_spi->preop;
+#if ENV_RAMSTAGE
+	if ((read32(&cntlr.regs->lvscc) & VCL) == 0) {
+		struct spi_config cfg;
+
+		if (mainboard_get_spi_config(&cfg) < 0) {
+			printk(BIOS_DEBUG, "No SPI lockdown configuration.\n");
+		} else {
+			writew_(cfg.preop, &ich9_spi->preop);
+			writew_(cfg.optype, &ich9_spi->optype);
+			writel_(cfg.opmenu[0], ich9_spi->opmenu + 0);
+			writel_(cfg.opmenu[1], ich9_spi->opmenu + 4);
+			writew_(readw_(&ich9_spi->hsfs) | HSFS_FLOCKDN, &ich9_spi->hsfs);
+			writel_(cfg.uvscc, &ich9_spi->uvscc);
+			writel_(cfg.lvscc | VCL, &ich9_spi->lvscc);
+		}
+	}
+#endif
+	/* Hardware mode if the flash descriptor is valid and VSCC is locked */
+	if ((readw_(&ich9_spi->hsfs) & HSFS_FDV) != 0 &&
+	    (readl_(&ich9_spi->lvscc) & VCL) != 0) {
+		printk(BIOS_DEBUG, "SPI: Hardware Sequencing\n");
+		cntlr.hw_mode = 1;
+	} else {
+		printk(BIOS_DEBUG, "SPI: Software Sequencing\n");
+		cntlr.hw_mode = 0;
+		ichspi_lock = readw_(&ich9_spi->hsfs) & HSFS_FLOCKDN;
+		cntlr.opmenu = ich9_spi->opmenu;
+		cntlr.menubytes = sizeof(ich9_spi->opmenu);
+		cntlr.optype = &ich9_spi->optype;
+		cntlr.addr = &ich9_spi->faddr;
+		cntlr.data = (uint8_t *)ich9_spi->fdata;
+		cntlr.databytes = sizeof(ich9_spi->fdata);
+		cntlr.status = &ich9_spi->ssfs;
+		cntlr.control = (uint16_t *)ich9_spi->ssfc;
+		cntlr.preop = &ich9_spi->preop;
+	}
 }
+
+static void spi_init_cb(void *unused)
+{
+	spi_init();
+}
+
+BOOT_STATE_INIT_ENTRY(BS_DEV_INIT, BS_ON_ENTRY, spi_init_cb, NULL);
 
 int spi_claim_bus(struct spi_slave *slave)
 {
@@ -612,4 +647,209 @@ spi_xfer_exit:
 	writew_(0, cntlr.preop);
 
 	return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Below is the code for hardware sequencing
+
+/**
+ * Wait for the SCIP bit in the HSFSTS regsiter to clear.
+ * Return the last read status value on success or -1 on timeout.
+ */
+static int spi_hw_wait_idle(void)
+{
+	int      timeout = 40000; /* This will result in 400 ms */
+	uint16_t status = 0;
+
+	while (timeout--) {
+		status = readw_(cntlr.base + HSFSTS);
+		if ((status & HSFS_SCIP) == 0)
+			return status;
+		udelay(10);
+	}
+	printk(BIOS_WARNING, "SF: idle timeout, status %x\n", status);
+	return -1;
+}
+
+static int spi_hw_rw(struct spi_flash *flash, u32 offset, size_t len, void *buf, bool is_write)
+{
+	size_t   left = len;
+	uint32_t addr;
+	size_t   rw_size;
+	uint16_t status;
+
+	offset &= 0x00ffffff;
+	addr    = offset;
+
+	if (!flash || len == 0 || !buf)
+		return CB_ERR;
+
+	/* wait until SPI is idle */
+	if (spi_hw_wait_idle() == -1)
+		return CB_ERR;
+
+	while (left > 0) {
+		/* can't cross 4 KB or do more than 64 bytes */
+		rw_size = min(64, min(left, 0x1000 - (addr & 0x0fff)));
+
+		/* clear status from any previous transaction */
+		writew_(HSFS_FDONE | HSFS_FCERR | HSFS_AEL,
+			cntlr.base + HSFSTS);
+
+		/* Set the SPI addresses */
+		writel_(addr & 0x00FFFFFF, cntlr.base + FADDR);
+
+		/* write the data */
+		if (is_write)
+			write_reg(buf, cntlr.base + FDATA0, rw_size);
+
+		/* start the write transaction */
+		writew_(((rw_size - 1) << HSFC_FDBC_SHIFT) | HSFC_FGO |
+			(is_write ? HSFC_FCYCLE__WRITE : HSFC_FCYCLE__READ),
+			cntlr.base + HSFCTL);
+
+		/* wait until SPI SCIP is clear */
+		status = spi_hw_wait_idle();
+		if (status == -1)
+			return CB_ERR;
+
+		/* check for error */
+		if (status & (HSFS_AEL | HSFS_FCERR)) {
+			printk(BIOS_WARNING, "BIOS SPI: %s Error: 0x%04x\n",
+			       is_write ? "Write" : "Read", status);
+			return CB_ERR;
+		}
+
+		/* read in the results */
+		if (!is_write)
+			read_reg(cntlr.base + FDATA0, buf, rw_size);
+
+#if IS_ENABLED(CONFIG_DEBUG_SPI_FLASH)
+		printk(BIOS_DEBUG, "SPI: %s %zd bytes at %p\n",
+		       is_write ? "wrote" : "read", rw_size, (void *)addr);
+		hexdump(buf, rw_size);
+#endif
+
+		/* advance pointers */
+		buf  += rw_size;
+		addr += rw_size;
+		left -= rw_size;
+	}
+	return CB_SUCCESS;
+}
+
+static int spi_hw_read(struct spi_flash *flash, u32 offset, size_t len, void *buf)
+{
+	return spi_hw_rw(flash, offset, len, buf, false);
+}
+
+static int spi_hw_write(struct spi_flash *flash, u32 offset, size_t len, const void *buf)
+{
+	return spi_hw_rw(flash, offset, len, (void *)buf, true);
+}
+
+/**
+ * Erases blocks of data.
+ * The offset must start at the start of a block and the length must be a
+ * multiple of the erase block size.
+ */
+static int spi_hw_erase(struct spi_flash *flash, u32 offset, size_t len)
+{
+	uint16_t status;
+	int      blk_size, blk_mask;
+
+	if (!flash || len == 0)
+		return CB_ERR;
+
+	offset &= 0x00ffffff;
+
+	blk_size = flash->sector_size;
+	blk_mask = blk_size - 1;
+	if (((offset & blk_mask) != 0) || ((len & blk_mask) != 0)) {
+		printk(BIOS_ERR, "SF Erase: Bad offset [%p] or length [%zd] for block size %d\n",
+		       (void *)offset, len, blk_size);
+		return CB_ERR;
+	}
+
+	/* wait until SPI is idle */
+	if (spi_hw_wait_idle() == -1)
+		return CB_ERR;
+
+	while (len > 0) {
+		/* clear status from any previous transaction */
+		writew_(HSFS_FDONE | HSFS_FCERR | HSFS_AEL,
+			cntlr.base + HSFSTS);
+
+		/* Set the SPI addresses (any address in the block is OK) */
+		writel_(offset & 0x00FFFFFF, cntlr.base + FADDR);
+
+		/* start the erase transaction */
+		writew_(HSFC_FCYCLE__ERASE | HSFC_FGO, cntlr.base + HSFCTL);
+
+		/* wait until SPI SCIP is clear (this takes a while) */
+		status = spi_hw_wait_idle();
+		if (status == -1)
+			return CB_ERR;
+
+		/* check for error */
+		if (status & (HSFS_AEL | HSFS_FCERR)) {
+			printk(BIOS_WARNING, "SF: Erase Error: 0x%04x\n", status);
+			return CB_ERR;
+		}
+
+#if IS_ENABLED(CONFIG_DEBUG_SPI_FLASH)
+		printk(BIOS_DEBUG, "SF: Erased block %p\n", (void *)offset);
+#endif
+		offset += blk_size;
+		len    -= blk_size;
+	}
+	return CB_SUCCESS;
+}
+
+static int spi_hw_status(struct spi_flash *flash, u8 *reg)
+{
+	/* Fake it - doesn't look this is used anywhere */
+	if (flash && reg) {
+		*reg = 0;
+		return CB_SUCCESS;
+	}
+	return CB_ERR;
+}
+
+static int decode_berase(int val)
+{
+	static const int sizes[4] = { 0x00100, 0x01000, 0x02000, 0x10000 };
+	return sizes[val & 0x03];
+}
+
+static struct spi_flash *spi_hw_probe(struct spi_slave *spi)
+{
+	struct spi_flash *flash;
+
+	flash = malloc(sizeof(*flash));
+	if (!flash) {
+		printk(BIOS_WARNING, "SF: Failed to allocate memory\n");
+		return NULL;
+	}
+
+	flash->spi = spi;
+	flash->name = "HWSeq";
+
+	/* Assumptions:
+	 *  - The BIOS region is located at the end of the flash (0xffffff)
+	 *  - LVSCC.lbes == UVSCC.ubes (same erase size)
+	 */
+	uint32_t bfpr = readl_(cntlr.base + BFPREG);
+	flash->size = 1 + ((bfpr >> 4) | 0x0fff); /* bit 24:12 are in 28:16 */
+
+	uint32_t lvscc = readl_(cntlr.base + LVSCC);
+	flash->sector_size = decode_berase(lvscc);
+	flash->erase_cmd = (lvscc >> 8) & 0xff; // N/A for HW sequencing
+	flash->status_cmd = 0; // N/A for HW sequencing
+	flash->read = spi_hw_read;
+	flash->write = spi_hw_write;
+	flash->erase = spi_hw_erase;
+	flash->status = spi_hw_status;
+
+	return flash;
 }
