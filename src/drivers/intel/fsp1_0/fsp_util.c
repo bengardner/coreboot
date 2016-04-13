@@ -317,7 +317,7 @@ static void find_fsp_hob_update_mrc(void *unused)
  */
 static void fsp_after_pci_enum(void *unused)
 {
-	/* This call needs to be done before resource allocation. */
+	/* This call needs to be done after resource allocation. */
 	printk(BIOS_DEBUG, "FspNotify(EnumInitPhaseAfterPciEnumeration)\n");
 	post_code(POST_FSP_NOTIFY_BEFORE_ENUMERATE);
 	FspNotify(EnumInitPhaseAfterPciEnumeration);
@@ -339,7 +339,7 @@ static void fsp_finalize(void *unused)
 }
 
 /* Set up for the ramstage FSP calls */
-BOOT_STATE_INIT_ENTRY(BS_DEV_ENUMERATE, BS_ON_EXIT, fsp_after_pci_enum, NULL);
+BOOT_STATE_INIT_ENTRY(BS_POST_DEVICE, BS_ON_EXIT, fsp_after_pci_enum, NULL);
 BOOT_STATE_INIT_ENTRY(BS_PAYLOAD_BOOT, BS_ON_ENTRY, fsp_finalize, NULL);
 
 /* Update the MRC/fast boot cache as part of the late table writing stage */
