@@ -339,6 +339,7 @@ CPPFLAGS_common := -Isrc -Isrc/include -Isrc/commonlib/include -I$(obj)
 CPPFLAGS_common += -Isrc/device/oprom/include
 VB_SOURCE ?= 3rdparty/vboot
 CPPFLAGS_common += -I$(VB_SOURCE)/firmware/include
+CPPFLAGS_common += -I$(VB_SOURCE)/firmware/2lib/include
 CPPFLAGS_common += -include $(src)/include/kconfig.h
 CPPFLAGS_common += -I3rdparty
 
