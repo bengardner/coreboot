@@ -21,20 +21,34 @@
 #include <option.h>
 #include <rules.h>
 #include <version.h>
+#include "mainboard/wabtec/cpu1903/wabtec-cpu1900-io.h"
+#include <option_table.h>
 
 /* While in romstage, console loglevel is built-time constant. */
 static ROMSTAGE_CONST int console_loglevel = CONFIG_DEFAULT_CONSOLE_LOGLEVEL;
 
 int console_log_level(int msg_level)
 {
+#if defined(__PRE_RAM__)
+	/* CPU-1900 HACK: console_loglevel store in FPGA scratch register during ROM stage */
+	int cll = fpga_read_u8(CPU1900_REG_SCRATCH);
+	return (cll >= msg_level);
+#else
 	return (console_loglevel >= msg_level);
+#endif
 }
 
 void console_init(void)
 {
-#if !defined(__PRE_RAM__)
+	int cll;
+#if defined(__PRE_RAM__)
+	/* copy the debug_level from CMOS to the CPU1900 scratch register */
+	cll = read_option(debug_level, CONFIG_DEFAULT_CONSOLE_LOGLEVEL);
+	fpga_write_u8(CPU1900_REG_SCRATCH, cll);
+#else
 	console_loglevel = CONFIG_DEFAULT_CONSOLE_LOGLEVEL;
 	get_option(&console_loglevel, "debug_level");
+	cll = console_loglevel;
 #endif
 
 #if CONFIG_EARLY_PCI_BRIDGE && !defined(__SMM__)
@@ -43,6 +57,6 @@ void console_init(void)
 
 	console_hw_init();
 
-	printk(BIOS_INFO, "\n\ncoreboot-%s%s %s " ENV_STRING " starting...\n",
-	       coreboot_version, coreboot_extra_version, coreboot_build);
+	printk(BIOS_NOTICE, "\n\ncoreboot-%s%s %s " ENV_STRING " starting... [%d]\n",
+	       coreboot_version, coreboot_extra_version, coreboot_build, cll);
 }
