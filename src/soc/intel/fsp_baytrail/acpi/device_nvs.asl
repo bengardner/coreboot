@@ -80,3 +80,6 @@ LPB1,	32,	// LPE BAR1
 /* Extra */
 
 LPFW,	32,	// LPE BAR2 Firmware
+S240,	8,	// W240_PTN3460
+S274,	8,	// W274_PCA9539
+S518,	8,	// W518_AIC3204

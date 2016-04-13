@@ -58,7 +58,10 @@ typedef struct {
 
 	/* Extra */
 	u32	lpe_fw; /* LPE Firmware */
-	u8	rsvd1[3930]; /* Add padding so sizeof(device_nvs_t) == 0x1000 */
+	u8	S240_PTN3460;
+	u8	S274_PCA9539;
+	u8	S518_AIC3204;
+	u8	rsvd1[3927]; /* Add padding so sizeof(device_nvs_t) == 0x1000 */
 } __attribute__((packed)) device_nvs_t;
 
 #endif

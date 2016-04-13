@@ -20,6 +20,7 @@ Device (EMMC)
 	Name (_CID, "PNP0D40")
 	Name (_UID, 1)
 	Name (_DDN, "eMMC Controller 4.5")
+	Name (_ADR, 0x00100000)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -83,6 +84,7 @@ Device (SDIO)
 	Name (_CID, "PNP0D40")
 	Name (_UID, 2)
 	Name (_DDN, "SDIO Controller")
+	Name (_ADR, 0x00110000)
 
 	Name (RBUF, ResourceTemplate()
 	{
@@ -135,6 +137,7 @@ Device (SDCD)
 	Name (_CID, "PNP0D40")
 	Name (_UID, 3)
 	Name (_DDN, "SD Card Controller")
+	Name (_ADR, 0x00120000)
 
 	Name (RBUF, ResourceTemplate()
 	{

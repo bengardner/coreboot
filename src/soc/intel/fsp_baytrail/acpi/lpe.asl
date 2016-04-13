@@ -21,6 +21,7 @@ Device (LPEA)
 	Name (_UID, 1)
 	Name (_DDN, "Low Power Audio Controller")
 	Name (_PR0, Package () { PLPE })
+	Name (_ADR, 0x00150000)
 
 	Name (RBUF, ResourceTemplate()
 	{
