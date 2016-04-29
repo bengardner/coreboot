@@ -113,6 +113,7 @@ static void print_submenu(struct coreinfo_cat *cat)
 #if IS_ENABLED(CONFIG_SHOW_DATE_TIME)
 static void print_time_and_date(void)
 {
+	static struct tm old_tm;
 	struct tm tm;
 
 	while (nvram_updating())
@@ -120,9 +121,12 @@ static void print_time_and_date(void)
 
 	rtc_read_clock(&tm);
 
-	mvwprintw(menuwin, 1, 57, "%02d/%02d/%04d - %02d:%02d:%02d",
-		  tm.tm_mon + 1, tm.tm_mday, 1900 + tm.tm_year, tm.tm_hour,
-		  tm.tm_min, tm.tm_sec);
+	if (memcmp(&old_tm, &tm, sizeof(old_tm))) {
+		mvwprintw(menuwin, 1, 57, "%02d/%02d/%04d - %02d:%02d:%02d",
+			  tm.tm_mon + 1, tm.tm_mday, 1900 + tm.tm_year, tm.tm_hour,
+			  tm.tm_min, tm.tm_sec);
+		memcpy(&old_tm, &tm, sizeof(old_tm));
+	}
 }
 #endif
 
