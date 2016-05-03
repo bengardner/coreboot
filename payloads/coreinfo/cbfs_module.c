@@ -220,7 +220,7 @@ static int cbfs_module_redraw(WINDOW * win)
 
 static int cbfs_module_handle(int key)
 {
-	int ret = 0;
+	int old_selected = selected, old_start = start_row;
 
 	if (filecount == 0)
 		return 0;
@@ -231,20 +231,32 @@ static int cbfs_module_handle(int key)
 			selected++;
 			if (selected >= start_row + FILES_VISIBLE - 1)
 				start_row = selected - (FILES_VISIBLE - 1);
-			ret = 1;
 		}
+		break;
+	case KEY_NPAGE: /* Page down */
+		selected += FILES_VISIBLE;
+		if (selected > filecount - 1)
+			selected = filecount - 1;
+		if (selected >= start_row + FILES_VISIBLE - 1)
+			start_row = selected - (FILES_VISIBLE - 1);
 		break;
 	case KEY_UP:
 		if (selected > 0) {
 			selected--;
 			if (selected < start_row)
 				start_row = selected;
-			ret = 1;
 		}
+		break;
+	case KEY_PPAGE: /* Page up */
+		selected -= FILES_VISIBLE;
+		if (selected < 0)
+			selected = 0;
+		if (selected < start_row)
+			start_row = selected;
 		break;
 	}
 
-	return ret;
+	return (old_selected != selected) || (old_start != start_row);
 }
 
 struct coreinfo_module cbfs_module = {
