@@ -186,10 +186,10 @@ static int bootlog_module_handle(int key)
 	case KEY_UP:
 		g_line--;
 		break;
-	case KEY_NPAGE: /* Page up */
+	case KEY_PPAGE: /* Page up */
 		g_line -= LINES_SHOWN;
 		break;
-	case KEY_PPAGE: /* Page down */
+	case KEY_NPAGE: /* Page down */
 		g_line += LINES_SHOWN;
 		break;
 	}
