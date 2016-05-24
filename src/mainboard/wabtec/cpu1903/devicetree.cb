@@ -80,14 +80,14 @@ chip soc/intel/fsp_baytrail
 		device pci 16.0 off end # 8086 0F37 - OTG controller
 		device pci 17.0 on  end # 8086 0F50 - EMMC 4.5 Port (MMC1 pins) - Only 1 EMMC port at a time
 		device pci 18.0 on  end # 8086 0F40 - SIO - DMA
-		device pci 18.1 on  end # 8086 0F41 -   I2C Port 1
+		device pci 18.1 off end # 8086 0F41 -   I2C Port 1
 		device pci 18.2 on  end # 8086 0F42 -   I2C Port 2 - DS3231
 		device pci 18.3 on  end # 8086 0F43 -   I2C Port 3 - TMP75C, EEPROM
-		device pci 18.4 on  end # 8086 0F44 -   I2C Port 4
+		device pci 18.4 off end # 8086 0F44 -   I2C Port 4
 		device pci 18.5 on  end # 8086 0F45 -   I2C Port 5 - Audio Codec
-		device pci 18.6 on  end # 8086 0F46 -   I2C Port 6
+		device pci 18.6 off end # 8086 0F46 -   I2C Port 6
 		device pci 18.7 off end # 8086 0F47 -   I2C Port 7 - unusable
-		device pci 1a.0 on  end # 8086 0F18 - Trusted Execution Engine
+		device pci 1a.0 off end # 8086 0F18 - Trusted Execution Engine
 		device pci 1b.0 off end # 8086 0F04 - HD Audio
 		device pci 1c.0 on  end # 8086 0F48 - PCIe Root Port 1 (x4 slot) - WGI210 NIC U13
 		device pci 1c.1 off end # 8086 0F4A - PCIe Root Port 2 - Unused
