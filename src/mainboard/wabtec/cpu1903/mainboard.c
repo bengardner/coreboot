@@ -559,6 +559,10 @@ static void mainboard_enable(device_t dev)
 	/* FIXME: (TEST CODE) increment the boot count */
 	fpga_write_u8(CPU1900_REG_BIOS_BOOT_COUNT,
 	              fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT) + 1);
+
+	i2c_close(1);
+	i2c_close(2);
+	i2c_close(4);
 }
 
 static void cpu1900_ramstage_start(void *unused)
