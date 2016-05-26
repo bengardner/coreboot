@@ -128,6 +128,7 @@
 
 /* Prototype section*/
 int i2c_init(unsigned bus);
+void i2c_close(unsigned bus);
 int i2c_read(unsigned bus, unsigned chip, unsigned addr, uint8_t *buf, unsigned len);
 int i2c_write(unsigned bus, unsigned chip, unsigned addr, const uint8_t *buf, unsigned len);
 

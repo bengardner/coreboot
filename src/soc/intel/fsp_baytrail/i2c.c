@@ -141,12 +141,37 @@ int i2c_init(unsigned bus)
 	/* For 400 kHz, the counter value is 0x7d */
 	write32(base_ptr + I2C_FS_SCL_HCNT, 0x7d);
 	write32(base_ptr + I2C_FS_SCL_LCNT, 0x7d);
+	/* no interrupts in BIOS */
+	write32(base_ptr + I2C_INTR_MASK, 0);
 
 	/* Enable the I2C controller for operation */
 	write32(base_ptr + I2C_ENABLE, 0x1);
 
 	printk(BIOS_INFO, "I2C: Controller %d enabled.\n", bus);
 	return I2C_SUCCESS;
+}
+
+static char *i2c_get_base(unsigned bus)
+{
+	device_t dev;
+	char *base_ptr;
+
+	/* Get base address of desired I2C-controller */
+	dev = dev_find_slot(0, PCI_DEVFN(I2C1_DEV, bus + 1));
+	base_ptr = (char *)pci_read_config32(dev, PCI_BASE_ADDRESS_0);
+	if (base_ptr == NULL) {
+		printk(BIOS_INFO, "I2C-%d: Invalid Base address\n", bus);
+	}
+	return base_ptr;
+}
+
+void i2c_close(unsigned bus)
+{
+	char *base_ptr;
+
+	if ((base_ptr = i2c_get_base(bus)) != NULL) {
+		write32(base_ptr + I2C_ENABLE, 0);
+	}
 }
 
 /** \brief Read bytes over I2C-Bus from a slave. This function tries only one
@@ -163,18 +188,13 @@ int i2c_read(unsigned bus, unsigned chip, unsigned addr,
 			uint8_t *buf, unsigned len)
 {
 	int i = 0;
-	char *base_ptr = NULL;
-	device_t dev;
+	char *base_ptr;
 	unsigned int val;
 	int stat;
 
 	/* Get base address of desired I2C-controller */
-	dev = dev_find_slot(0, PCI_DEVFN(I2C1_DEV, bus + 1));
-	base_ptr = (char *)pci_read_config32(dev, PCI_BASE_ADDRESS_0);
-	if (base_ptr == NULL) {
-		printk(BIOS_INFO, "I2C: Invalid Base address\n");
+	if ((base_ptr = i2c_get_base(bus)) == NULL)
 		return I2C_ERR_INVALID_ADR;
-	}
 
 	/* Ensure I2C controller is not active before setting slave address */
 	stat = wait_for_idle(base_ptr);
@@ -223,16 +243,12 @@ int i2c_write(unsigned bus, unsigned chip, unsigned addr,
 {
 	int i;
 	char *base_ptr;
-	device_t dev;
 	unsigned int val;
 	int stat;
 
 	/* Get base address of desired I2C-controller */
-	dev = dev_find_slot(0, PCI_DEVFN(I2C1_DEV, bus + 1));
-	base_ptr = (char *)pci_read_config32(dev, PCI_BASE_ADDRESS_0);
-	if (base_ptr == NULL) {
+	if ((base_ptr = i2c_get_base(bus)) == NULL)
 		return I2C_ERR_INVALID_ADR;
-	}
 
 	/* Ensure I2C controller is not active yet */
 	stat = wait_for_idle(base_ptr);
