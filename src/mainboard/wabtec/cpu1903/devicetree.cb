@@ -54,7 +54,7 @@ chip soc/intel/fsp_baytrail
 	register "AzaliaAutoEnable"        = "AZALIA_FOLLOWS_DEVICETREE"
 	register "LpeAcpiModeEnable"       = "LPE_ACPI_MODE_ENABLED"
 	register "IgdRenderStandby"        = "IGD_RENDER_STANDBY_ENABLE"
-	register "PcdEMMC45DDR50Enabled"   = "EMMC45_DDR50_DISABLE"
+	register "PcdEMMC45DDR50Enabled"   = "EMMC45_DDR50_ENABLE"
 
 	register "PcdEMMC45HS200Enabled"     = "EMMC45_HS200_DISABLE"
 	register "PcdEMMC45RetuneTimerValue" = "EMMC45_RETURN_TIMER_DEFAULT"
