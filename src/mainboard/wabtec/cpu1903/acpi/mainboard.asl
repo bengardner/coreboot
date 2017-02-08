@@ -114,7 +114,7 @@ Scope (\_SB.PCI0.I2C3)
 		Name (_DSD, Package () {
 			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
 			Package () {
-				Package () {"compatible", Package () {"st,m24c02", "linux,at24"}},
+				Package () {"compatible", Package () {"st,24c02"}},
 				Package () {"size", 256},
 				Package () {"pagesize", 16},
 			},
@@ -190,7 +190,7 @@ Scope (\_SB.PCI0)
 			Name (_DSD, Package () {
 				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
 				Package () {
-					Package () {"compatible", Package () {"st,m24c02", "linux,at24"}},
+					Package () {"compatible", Package () {"st,24c02"}},
 					Package () {"size", 256},
 					Package () {"pagesize", 16},
 					Package () {"read-only", 1},
@@ -213,7 +213,7 @@ Scope (\_SB.PCI0)
 			Name (_DSD, Package () {
 				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
 				Package () {
-					Package () {"compatible", Package () {"st,m24c02", "linux,at24"}},
+					Package () {"compatible", Package () {"st,24c02"}},
 					Package () {"size", 256},
 					Package () {"pagesize", 16},
 					Package () {"read-only", 1},
