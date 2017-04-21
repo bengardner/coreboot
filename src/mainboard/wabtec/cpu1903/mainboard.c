@@ -556,10 +556,6 @@ static void mainboard_enable(device_t dev)
 	printk(BIOS_INFO, "CPU1900: DTE LED green\n");
 	fpga_write_u8(CPU1900_REG_DTE_LED_DUTY, CPU1900_LED_GREEN);
 
-	/* FIXME: (TEST CODE) increment the boot count */
-	fpga_write_u8(CPU1900_REG_BIOS_BOOT_COUNT,
-	              fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT) + 1);
-
 	i2c_close(1);
 	i2c_close(2);
 	i2c_close(4);
