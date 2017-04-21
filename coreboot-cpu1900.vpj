@@ -286,6 +286,12 @@
 					</Folder>
 				</Folder>
 				<Folder Name="pc80">
+					<Folder Name="rtc">
+						<F N="src/drivers/pc80/rtc/Kconfig"/>
+						<F N="src/drivers/pc80/rtc/Makefile.inc"/>
+						<F N="src/drivers/pc80/rtc/mc146818rtc.c"/>
+						<F N="src/drivers/pc80/rtc/mc146818rtc_early.c"/>
+					</Folder>
 					<Folder Name="vga">
 						<F N="src/drivers/pc80/vga/Makefile.inc"/>
 						<F N="src/drivers/pc80/vga/vga.c"/>
@@ -294,14 +300,6 @@
 						<F N="src/drivers/pc80/vga/vga_io.c"/>
 						<F N="src/drivers/pc80/vga/vga_palette.c"/>
 					</Folder>
-					<F N="src/drivers/pc80/i8254.c"/>
-					<F N="src/drivers/pc80/i8259.c"/>
-					<F N="src/drivers/pc80/isa-dma.c"/>
-					<F N="src/drivers/pc80/Kconfig"/>
-					<F N="src/drivers/pc80/keyboard.c"/>
-					<F N="src/drivers/pc80/Makefile.inc"/>
-					<F N="src/drivers/pc80/mc146818rtc.c"/>
-					<F N="src/drivers/pc80/mc146818rtc_early.c"/>
 				</Folder>
 				<Folder Name="spi">
 					<F N="src/drivers/spi/adesto.c"/>
@@ -611,7 +609,6 @@
 						<F N="src/soc/intel/fsp_baytrail/chip.c"/>
 						<F N="src/soc/intel/fsp_baytrail/chip.h"/>
 						<F N="src/soc/intel/fsp_baytrail/cpu.c"/>
-						<F N="src/soc/intel/fsp_baytrail/elog.c"/>
 						<F N="src/soc/intel/fsp_baytrail/gfx.c"/>
 						<F N="src/soc/intel/fsp_baytrail/gpio.c"/>
 						<F N="src/soc/intel/fsp_baytrail/i2c.c"/>
