@@ -140,7 +140,7 @@ void cmos_init(bool invalid)
 		if (cmos_invalid)
 			cmos_reset_date();
 
-		printk(BIOS_WARNING, "RTC:%s%s%s%s\n",
+		printk(BIOS_DEBUG, "RTC:%s%s%s%s\n",
 			invalid ? " Clear requested":"",
 			cmos_invalid ? " Power Problem":"",
 			checksum_invalid ? " Checksum invalid":"",
