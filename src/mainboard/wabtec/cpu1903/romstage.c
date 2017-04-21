@@ -117,15 +117,21 @@ static void cpu1900_verify_bios(void)
 	/* I'm (ab)using the VBOOT timing entries here... */
 	timestamp_add_now(TS_START_VBOOT);
 	post_code(0xd0);
+
+	u8 bct = fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT);
+	if ((bct & CPU1900_REG_BIOS_BOOT_COUNT__TEST_REBOOT) != 0) {
+		printk(BIOS_ALERT, "CPU1900: TEST Reboot\n");
+		post_code(0xd3);
+		delay(1);
+		cold_reset();
+		return;
+	}
+
 	if ((cpu1900_calc_hash(dig, sizeof(dig)) == 0) &&
 	    (memcmp(dig, rdev_mmap_full(&rdev_hash), sizeof(dig)) == 0)) {
 		printk(BIOS_WARNING, "CPU1900: BIOS SHA-1 Verified\n");
 		timestamp_add_now(TS_END_VBOOT);
 		post_code(0xd1);
-
-		/* set the BIOS happy bit */
-		fpga_write_u8(CPU1900_REG_BIOS_BOOT,
-		              fpga_read_u8(CPU1900_REG_BIOS_BOOT) | CPU1900_REG_BIOS_BOOT__HAPPY);
 	} else {
 		printk(BIOS_ALERT, "CPU1900: BIOS SHA-1 Check FAILED - Rebooting!\n");
 		post_code(0xd2);
@@ -151,17 +157,26 @@ static void cpu1900_verify_bios(void)
  */
 void early_mainboard_romstage_entry(void)
 {
+	u8 bct = fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT);
+	u8 sel = fpga_read_u8(CPU1900_REG_BIOS_SELECT);
+	u8 msc = fpga_read_u8(CPU1900_REG_MISC);
+
 	/* Set the LED to a 5 Hz red 50% blink */
 	fpga_write_u8(CPU1900_REG_STATUS_LED_DUTY, CPU1900_LED_RED_BLINK);
 	fpga_write_u8(CPU1900_REG_STATUS_LED_RATE, CPU1900_LED_5_HZ);
 
-	printk(BIOS_NOTICE, "Reset:%s Stage:0x%02x Count:%d Sel:0x%02x[%s] Boot:0x%02x\n",
+	printk(BIOS_NOTICE, "Reset:%s Stage:0x%02x Count:%d Test:%c%c%c%c Sel:0x%02x[%s] Boot:0x%02x NAC:%d NHC:%d\n",
 	       get_reset_cause_text(),
 	       fpga_read_u8(CPU1900_REG_BIOS_LAST_STAGE),
-	       fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT),
-	       fpga_read_u8(CPU1900_REG_BIOS_SELECT),
-	       (fpga_read_u8(CPU1900_REG_BIOS_SELECT) & 1) ? "Alt" : "Def",
-	       fpga_read_u8(CPU1900_REG_BIOS_BOOT));
+	       bct & CPU1900_REG_BIOS_BOOT_COUNT__COUNT,
+	       (bct & CPU1900_REG_BIOS_BOOT_COUNT__TEST_REBOOT) ? 'R' : '-',
+	       (bct & CPU1900_REG_BIOS_BOOT_COUNT__TEST_ALIVE) ? 'A' : '-',
+	       (bct & CPU1900_REG_BIOS_BOOT_COUNT__TEST_HAPPY) ? 'H' : '-',
+	       (bct & CPU1900_REG_BIOS_BOOT_COUNT__TEST_FAILED) ? 'F' : '-',
+	       sel, (sel & 1) ? "Alt" : "Def",
+	       fpga_read_u8(CPU1900_REG_BIOS_BOOT),
+	       (msc & CPU1900_REG_MISC__NOT_ALIVE_COUNT) >> 6,
+	       (msc & CPU1900_REG_MISC__NOT_HAPPY_COUNT) >> 3);
 }
 
 
