@@ -31,7 +31,7 @@ int console_log_level(int msg_level)
 {
 #if defined(__PRE_RAM__)
 	/* CPU-1900 HACK: console_loglevel store in FPGA scratch register during ROM stage */
-	int cll = fpga_read_u8(CPU1900_REG_SCRATCH);
+	int cll = fpga_read_u8(CPU1900_REG_CB_LOGLVL);
 	return (cll >= msg_level);
 #else
 	return (console_loglevel >= msg_level);
@@ -41,14 +41,20 @@ int console_log_level(int msg_level)
 void console_init(void)
 {
 	int cll;
+
+	cll = fpga_read_u8(CPU1900_REG_CB_LOGLVL);
 #if defined(__PRE_RAM__)
-	/* copy the debug_level from CMOS to the CPU1900 scratch register */
-	cll = read_option(debug_level, CONFIG_DEFAULT_CONSOLE_LOGLEVEL);
-	fpga_write_u8(CPU1900_REG_SCRATCH, cll);
+	{
+		int dcl = read_option(debug_level, CONFIG_DEFAULT_CONSOLE_LOGLEVEL);
+		if ((cll < dcl) || (cll > BIOS_NEVER) ||
+		    (fpga_read_u8(CPU1900_REG_RESET_CAUSE) == CPU1900_REG_RESET_CAUSE__M__COLD)) {
+			/* copy the debug_level from CMOS to the CPU1900 scratch register */
+			cll = dcl;
+			fpga_write_u8(CPU1900_REG_CB_LOGLVL, cll);
+		}
+	}
 #else
-	console_loglevel = CONFIG_DEFAULT_CONSOLE_LOGLEVEL;
-	get_option(&console_loglevel, "debug_level");
-	cll = console_loglevel;
+	console_loglevel = cll;
 #endif
 
 #if CONFIG_EARLY_PCI_BRIDGE && !defined(__SMM__)

@@ -124,26 +124,26 @@ static void cpu1900_verify_bios(void)
 	post_code(0xd1);
 
 	/* handle BIOS failure tests */
-	u8 tst = fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT) & CPU1900_REG_BIOS_BOOT_COUNT__TEST;
+	u8 tst = fpga_read_u8(CPU1900_REG_CB_TEST);
 
-	if ((tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__ALIVE_REBOOT) ||
-	    (tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__HAPPY_REBOOT)) {
+	if ((tst == CPU1900_REG_CB_TEST__M__ALIVE_REBOOT) ||
+	    (tst == CPU1900_REG_CB_TEST__M__HAPPY_REBOOT)) {
 		printk(BIOS_ALERT, "CPU1900: TEST %s Reboot\n",
-		       (tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__ALIVE_REBOOT) ? "Alive" : "Happy");
+		       (tst == CPU1900_REG_CB_TEST__M__ALIVE_REBOOT) ? "Alive" : "Happy");
 		post_code(0xd3);
 		delay(1);
 		cold_reset();
 		return;
-	} else if ((tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__ALIVE_HANG) ||
-	           (tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__HAPPY_HANG)) {
+	} else if ((tst == CPU1900_REG_CB_TEST__M__ALIVE_HANG) ||
+	           (tst == CPU1900_REG_CB_TEST__M__HAPPY_HANG)) {
 		printk(BIOS_ALERT, "CPU1900: TEST %s Hang\n",
-		       (tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__ALIVE_HANG) ? "Alive" : "Happy");
+		       (tst == CPU1900_REG_CB_TEST__M__ALIVE_HANG) ? "Alive" : "Happy");
 		post_code(0xd4);
 		while (1) {
 			delay(1);
 		}
 		return;
-	} else if (tst == CPU1900_REG_BIOS_BOOT_COUNT__TEST__HASH_FAIL) {
+	} else if (tst == CPU1900_REG_CB_TEST__M__HASH_FAIL) {
 		printk(BIOS_ALERT, "CPU1900: TEST Hash Fail\n");
 		hash_ok = 0;
 	}
@@ -164,7 +164,8 @@ static void cpu1900_verify_bios(void)
 		fpga_write_u8(CPU1900_REG_BIOS_BOOT, val);
 
 		/* reset the boot count and clear all tests - just in case */
-		fpga_write_u8(CPU1900_REG_BIOS_BOOT_COUNT, 0);
+		fpga_write_u8(CPU1900_REG_CB_BOOT_COUNT, 0);
+		fpga_write_u8(CPU1900_REG_CB_TEST, CPU1900_REG_CB_TEST__M__NONE);
 
 		printk(BIOS_ALERT, "CPU1900: Wrote 0x%02x to BIOS BOOT reg\n", val);
 		delay(1);
@@ -178,7 +179,10 @@ static void cpu1900_verify_bios(void)
  */
 void early_mainboard_romstage_entry(void)
 {
-	u8 bct = fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT);
+	u8 bct = fpga_read_u8(CPU1900_REG_CB_BOOT_COUNT);
+	u8 tst = fpga_read_u8(CPU1900_REG_CB_TEST);
+	u8 res = fpga_read_u8(CPU1900_REG_CB_RES);
+	u8 tct = fpga_read_u8(CPU1900_REG_CB_TEST_COUNT);
 	u8 sel = fpga_read_u8(CPU1900_REG_BIOS_SELECT);
 	u8 msc = fpga_read_u8(CPU1900_REG_MISC);
 
@@ -186,11 +190,10 @@ void early_mainboard_romstage_entry(void)
 	fpga_write_u8(CPU1900_REG_STATUS_LED_DUTY, CPU1900_LED_RED_BLINK);
 	fpga_write_u8(CPU1900_REG_STATUS_LED_RATE, CPU1900_LED_5_HZ);
 
-	printk(BIOS_NOTICE, "Reset:%s Stage:0x%02x Count:%d Test:%d Sel:0x%02x[%s] Boot:0x%02x NAC:%d NHC:%d\n",
+	printk(BIOS_NOTICE, "Reset:%s Stage:0x%02x Count:%d Test:%d/%d/%d Sel:0x%02x[%s] Boot:0x%02x NAC:%d NHC:%d\n",
 	       get_reset_cause_text(),
 	       fpga_read_u8(CPU1900_REG_BIOS_LAST_STAGE),
-	       bct & CPU1900_REG_BIOS_BOOT_COUNT__COUNT,
-	       (bct & CPU1900_REG_BIOS_BOOT_COUNT__TEST) >> 4,
+	       bct, tst, tct, res,
 	       sel, (sel & 1) ? "Alt" : "Def",
 	       fpga_read_u8(CPU1900_REG_BIOS_BOOT),
 	       (msc & CPU1900_REG_MISC__NOT_ALIVE_COUNT) >> 6,

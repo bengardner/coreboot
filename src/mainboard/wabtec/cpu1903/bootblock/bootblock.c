@@ -16,47 +16,58 @@ static void bootblock_mainboard_init(void)
 	fpga_write_u8(CPU1900_REG_STATUS_LED_DUTY, CPU1900_LED_RED_BLINK);
 	fpga_write_u8(CPU1900_REG_STATUS_LED_RATE, CPU1900_LED_10_HZ);
 
-	/* TEST: Put all the PCIe devices into reset */
+	/* Put all the PCIe devices into reset */
 	fpga_write_u8(CPU1900_REG_RESET_1,
 	              CPU1900_REG_RESET_1__PCIE_RESET |
 	              CPU1900_REG_RESET_1__FP_ETH_RESET |
 	              CPU1900_REG_RESET_1__BP_ETH_RESET);
 
+	/* Note boot progress */
 	fpga_write_u8(CPU1900_REG_BIOS_BOOT_STAGE, CPU1900_BOOT_STAGE_CB_BOOTBLOCK);
 
-	/* Increment the boot count.
-	 * Clear the test bits when the count rolls over to 0 to break out of an
-	 * endless reset loop.
-	 * Also clear the tests when a failure is detected and copy the failure bit.
-	 */
-	u8 val, tst, cnt, bbr;
+	/* Increment the boot count */
+	fpga_write_u8(CPU1900_REG_CB_BOOT_COUNT, fpga_read_u8(CPU1900_REG_CB_BOOT_COUNT) + 1);
 
-	val  = fpga_read_u8(CPU1900_REG_BIOS_BOOT_COUNT);
-	tst  = val & CPU1900_REG_BIOS_BOOT_COUNT__TEST;
-	cnt  = val + 1;
-	cnt &= CPU1900_REG_BIOS_BOOT_COUNT__COUNT;
-	val &= ~(CPU1900_REG_BIOS_BOOT_COUNT__TEST | CPU1900_REG_BIOS_BOOT_COUNT__COUNT);
+	u8 tst, cnt, bbr, res;
 
-	if (cnt == 0) {
-		if ((tst > CPU1900_REG_BIOS_BOOT_COUNT__TEST__NONE) &&
-			 (tst < CPU1900_REG_BIOS_BOOT_COUNT__TEST__RES_OVERFLOW)) {
-			tst = CPU1900_REG_BIOS_BOOT_COUNT__TEST__RES_OVERFLOW;
+	/* See if a test is active */
+	res = CPU1900_REG_CB_RES__M__NONE;
+	tst = fpga_read_u8(CPU1900_REG_CB_TEST);
+	cnt = 0;
+	if (tst != CPU1900_REG_CB_TEST__M__NONE) {
+		if (tst > CPU1900_REG_CB_TEST__M__HASH_FAIL) {
+			/* invalid test value */
+			tst = CPU1900_REG_CB_TEST__M__NONE;
+			res = CPU1900_REG_CB_RES__M__INVALID;
+		} else {
+			cnt = fpga_read_u8(CPU1900_REG_CB_TEST_COUNT);
+			if (cnt == 0) {
+				/* test expired due to count hitting 0 */
+				tst = CPU1900_REG_CB_TEST__M__NONE;
+				res = CPU1900_REG_CB_RES__M__COUNT;
+			} else {
+				/* test still active */
+				cnt--;
+			}
 		}
 	}
 
+	/* handle a BIOS boot failure switch */
 	bbr = fpga_read_u8(CPU1900_REG_BIOS_BOOT);
 	if ((bbr & CPU1900_REG_BIOS_BOOT__FAILED) != 0) {
-		tst = CPU1900_REG_BIOS_BOOT_COUNT__TEST__RES_FAILOVER;
-		cnt = 0;
-	} else if (tst >= CPU1900_REG_BIOS_BOOT_COUNT__TEST__RES_OVERFLOW) {
-		tst = CPU1900_REG_BIOS_BOOT_COUNT__TEST__NONE;
+		res = CPU1900_REG_CB_RES__M__FAILOVER;
+		tst = CPU1900_REG_CB_TEST__M__NONE;
 		cnt = 0;
 	}
-	fpga_write_u8(CPU1900_REG_BIOS_BOOT_COUNT, val | tst | cnt);
+
+	/* save off registers */
+	fpga_write_u8(CPU1900_REG_CB_TEST, tst);
+	fpga_write_u8(CPU1900_REG_CB_TEST_COUNT, cnt);
+	fpga_write_u8(CPU1900_REG_CB_RES, res);
 
 	/* set the BIOS alive bit if TEST_ALIVE not set */
-	if ((tst != CPU1900_REG_BIOS_BOOT_COUNT__TEST__ALIVE_REBOOT) &&
-		 (tst != CPU1900_REG_BIOS_BOOT_COUNT__TEST__ALIVE_HANG)) {
+	if ((tst != CPU1900_REG_CB_TEST__M__ALIVE_REBOOT) &&
+		 (tst != CPU1900_REG_CB_TEST__M__ALIVE_HANG)) {
 		fpga_write_u8(CPU1900_REG_BIOS_BOOT, bbr | CPU1900_REG_BIOS_BOOT__ALIVE);
 	}
 }
