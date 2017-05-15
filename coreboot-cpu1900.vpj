@@ -89,7 +89,10 @@
 							</Folder>
 							<F N="src/arch/x86/include/arch/acpi.h"/>
 							<F N="src/arch/x86/include/arch/acpigen.h"/>
+							<F N="src/arch/x86/include/arch/bootblock_romcc.h"/>
 							<F N="src/arch/x86/include/arch/byteorder.h"/>
+							<F N="src/arch/x86/include/arch/cache.h"/>
+							<F N="src/arch/x86/include/arch/cbconfig.h"/>
 							<F N="src/arch/x86/include/arch/cbfs.h"/>
 							<F N="src/arch/x86/include/arch/cpu.h"/>
 							<F N="src/arch/x86/include/arch/early_variables.h"/>
@@ -108,6 +111,7 @@
 							<F N="src/arch/x86/include/arch/registers.h"/>
 							<F N="src/arch/x86/include/arch/rom_segs.h"/>
 							<F N="src/arch/x86/include/arch/stages.h"/>
+							<F N="src/arch/x86/include/arch/symbols.h"/>
 						</Folder>
 						<F N="src/arch/x86/include/stdint.h"/>
 					</Folder>
