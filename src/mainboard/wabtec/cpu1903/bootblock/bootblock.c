@@ -35,7 +35,7 @@ static void bootblock_mainboard_init(void)
 	tst = fpga_read_u8(CPU1900_REG_CB_TEST);
 	cnt = 0;
 	if (tst != CPU1900_REG_CB_TEST__M__NONE) {
-		if (tst > CPU1900_REG_CB_TEST__M__HASH_FAIL) {
+		if (tst > CPU1900_REG_CB_TEST__M__BOOT_FAIL) {
 			/* invalid test value */
 			tst = CPU1900_REG_CB_TEST__M__NONE;
 			res = CPU1900_REG_CB_RES__M__INVALID;
