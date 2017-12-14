@@ -134,9 +134,9 @@ static int bootlog_get_region(struct bootlog_region *blr)
 
 /**
  * Find an empty slot and return the offset to that area.
- * Returns 0 on error.
+ * Returns -1 on error.
  */
-static uint32_t bootlog_find_blank(uint32_t *prev_cnt)
+static int32_t bootlog_find_blank(uint32_t *prev_cnt)
 {
 	int              page_bytes, page_recs;
 	size_t           file_bytes, file_recs;
@@ -146,7 +146,7 @@ static uint32_t bootlog_find_blank(uint32_t *prev_cnt)
 	struct bootlog_region blr;
 
 	if (bootlog_get_region(&blr) != 0) {
-		return 0;
+		return -1;
 	}
 	file_ptr   = blr.base;
 	file_bytes = blr.size;
